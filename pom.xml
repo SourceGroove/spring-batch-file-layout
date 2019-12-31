@@ -1,6 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0  http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0  http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <licenses>
         <license>
@@ -12,7 +10,7 @@
 
     <groupId>com.bitblox.batch.item.file</groupId>
     <artifactId>spring-batch-file-layout</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
     <name>spring-batch-file-layout</name>
     <description>Layout driven spring batch item readers and writers</description>
@@ -21,7 +19,7 @@
         <connection>scm:git:git://github.com/SourceGroove/spring-batch-file-layout.git</connection>
         <developerConnection>scm:git:git@github.com/SourceGroove/spring-batch-file-layout.git</developerConnection>
         <url>https://github.com/SourceGroove/spring-batch-file-layout.gitr</url>
-        <tag>HEAD</tag>
+        <tag>spring-batch-file-layout-1.0.0</tag>
     </scm>
     
     <properties>
@@ -97,6 +95,7 @@
                 <artifactId>maven-release-plugin</artifactId>
                 <version>3.0.0-M1</version>
                 <configuration>
+                    <tagNameFormat>v@{project.version}</tagNameFormat>
                     <localCheckout>true</localCheckout>
                     <pushChanges>false</pushChanges>
                     <mavenExecutorId>forked-path</mavenExecutorId>
