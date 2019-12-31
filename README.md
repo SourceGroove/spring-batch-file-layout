@@ -3,6 +3,8 @@
 Layout driven item readers and writers
 
 # Declarative file layouts can be used to create ItemReaders and ItemWriters
+
+## Fixed width files
 ```java
  FileLayout layout = new FixedWidthFileLayout()
         .linesToSkip(1)
@@ -17,6 +19,20 @@ Layout driven item readers and writers
             .prefix("role*")
             .column("roleKey", 1, 8)
             .column("role", 9, 20);
+
+FileLayoutItemReader reader = new FileLayoutItemReader();
+reader.setFileLayout(layout);
+```
+## Delimited files
+```java
+FileLayout layout = new DelimitedFileLayout()
+        .linesToSkip(1)
+        .record(MockUserRecord.class)
+        .column("username")
+        .column("firstName")
+        .column("lastName")
+        .column("dateOfBirth")
+        .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"));
 
 FileLayoutItemReader reader = new FileLayoutItemReader();
 reader.setFileLayout(layout);
