@@ -1,0 +1,1 @@
+gpg --send-keys –keyserver pool.sks-keyservers.net –send-key "$KEY_ID"
