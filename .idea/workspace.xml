@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="410559c5-4501-4e1d-a8fc-330ee36f444c" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1VidhCvUV3FoFQ8jkbXVRGvQ68n" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.bitblox.batch.item.file" />
+      <recent name="com.bitblox.batch.file.service" />
+    </key>
+  </component>
+  <component name="RunManager" selected="JUnit.com.bitblox.batch.item.file in file-layout">
+    <configuration name="FileLayoutBuilderTest.givenRecordsWithFillerWhenWriteThenWritenWithFiller" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="file-layout" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.bitblox.batch.item.file.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.bitblox.batch.file.service.batch" />
+      <option name="MAIN_CLASS_NAME" value="com.bitblox.batch.file.service.batch.FileLayoutBuilderTest" />
+      <option name="METHOD_NAME" value="givenRecordsWithFillerWhenWriteThenWritenWithFiller" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileLayoutBuilderTest.givenRecordsWithNoFillerWhenWriteThenWriten" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="file-layout" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.bitblox.batch.item.file.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.bitblox.batch.file.service.batch" />
+      <option name="MAIN_CLASS_NAME" value="com.bitblox.batch.file.service.batch.FileLayoutBuilderTest" />
+      <option name="METHOD_NAME" value="givenRecordsWithNoFillerWhenWriteThenWriten" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="FileLayoutTest.givenNonConsecutiveFieldsWhenFormatThenFiller" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="file-layout" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.bitblox.batch.item.file.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.bitblox.batch.file.service.batch" />
+      <option name="MAIN_CLASS_NAME" value="com.bitblox.batch.file.service.batch.FileLayoutTest" />
+      <option name="METHOD_NAME" value="givenNonConsecutiveFieldsWhenFormatThenFiller" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.bitblox.batch.file.service in file-layout" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="file-layout" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.bitblox.batch.item.file.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.bitblox.batch.file.service" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.bitblox.batch.file.service.batch in file-layout" type="JUnit" factoryName="JUnit" nameIsGenerated="true">
+      <module name="file-layout" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.bitblox.batch.item.file.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.bitblox.batch.file.service.batch" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="com.bitblox.batch.item.file in file-layout" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="file-layout" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.bitblox.batch.item.file.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.bitblox.batch.item.file" />
+      <option name="TEST_OBJECT" value="package" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Application" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+      <module name="file-layout" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="com.madenasolutions.sync.service.portal.Application" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.com.bitblox.batch.item.file in file-layout" />
+        <item itemvalue="JUnit.com.bitblox.batch.file.service in file-layout" />
+        <item itemvalue="JUnit.FileLayoutBuilderTest.givenRecordsWithFillerWhenWriteThenWritenWithFiller" />
+        <item itemvalue="JUnit.FileLayoutBuilderTest.givenRecordsWithNoFillerWhenWriteThenWriten" />
+        <item itemvalue="JUnit.FileLayoutTest.givenNonConsecutiveFieldsWhenFormatThenFiller" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="410559c5-4501-4e1d-a8fc-330ee36f444c" name="Default Changelist" comment="" />
+      <created>1577739966273</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1577739966273</updated>
+      <workItem from="1577739968574" duration="19919000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="100" y="123" width="1480" height="778" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog" timestamp="1577745152534">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state x="100" y="123" width="1480" height="778" key="#com.intellij.execution.junit2.states.ComparisonFailureState$DiffDialog/0.23.1680.978@0.23.1680.978" timestamp="1577745152534" />
+    <state x="653" y="228" key="#com.intellij.ide.util.MemberChooser" timestamp="1577758631327">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state x="653" y="228" key="#com.intellij.ide.util.MemberChooser/0.23.1680.978@0.23.1680.978" timestamp="1577758631327" />
+    <state x="597" y="378" width="488" height="276" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes" timestamp="1577766747853">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state x="597" y="378" width="488" height="276" key="#com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesDialog.classes/0.23.1680.978@0.23.1680.978" timestamp="1577766747853" />
+    <state x="448" y="23" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1577765036807">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state x="448" y="23" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.23.1680.978@0.23.1680.978" timestamp="1577765036807" />
+    <state width="1638" height="326" key="GridCell.Tab.0.bottom" timestamp="1577766997487">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.0.bottom/0.23.1680.978@0.23.1680.978" timestamp="1577766997487" />
+    <state width="1638" height="326" key="GridCell.Tab.0.center" timestamp="1577766997487">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.0.center/0.23.1680.978@0.23.1680.978" timestamp="1577766997487" />
+    <state width="1638" height="326" key="GridCell.Tab.0.left" timestamp="1577766997487">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.0.left/0.23.1680.978@0.23.1680.978" timestamp="1577766997487" />
+    <state width="1638" height="326" key="GridCell.Tab.0.right" timestamp="1577766997487">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.0.right/0.23.1680.978@0.23.1680.978" timestamp="1577766997487" />
+    <state width="1638" height="326" key="GridCell.Tab.1.bottom" timestamp="1577766997488">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.1.bottom/0.23.1680.978@0.23.1680.978" timestamp="1577766997488" />
+    <state width="1638" height="326" key="GridCell.Tab.1.center" timestamp="1577766997488">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.1.center/0.23.1680.978@0.23.1680.978" timestamp="1577766997488" />
+    <state width="1638" height="326" key="GridCell.Tab.1.left" timestamp="1577766997488">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.1.left/0.23.1680.978@0.23.1680.978" timestamp="1577766997488" />
+    <state width="1638" height="326" key="GridCell.Tab.1.right" timestamp="1577766997488">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state width="1638" height="326" key="GridCell.Tab.1.right/0.23.1680.978@0.23.1680.978" timestamp="1577766997488" />
+    <state x="505" y="238" width="670" height="676" key="search.everywhere.popup" timestamp="1577764358934">
+      <screen x="0" y="23" width="1680" height="978" />
+    </state>
+    <state x="505" y="238" width="670" height="676" key="search.everywhere.popup/0.23.1680.978@0.23.1680.978" timestamp="1577764358934" />
+  </component>
+</project>
