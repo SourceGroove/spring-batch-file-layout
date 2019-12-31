@@ -1,2 +1,0 @@
-user0001  Neo       Anderson  19780930
-user0002  Trinity   Smith     19800627

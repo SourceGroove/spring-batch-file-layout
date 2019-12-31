@@ -1,7 +1,0 @@
-com/bitblox/batch/file/service/batch/StringFormatBuilder.class
-com/bitblox/batch/file/service/batch/StringFormatBuilder$ColumnType.class
-com/bitblox/batch/file/service/batch/FileLayoutBuilder.class
-com/bitblox/batch/file/service/batch/FileLayout.class
-com/bitblox/batch/file/service/batch/editors/LocalDateEditor.class
-com/bitblox/batch/file/service/batch/RecordLayout.class
-com/bitblox/batch/file/service/batch/editors/LocalDateTimeEditor.class
