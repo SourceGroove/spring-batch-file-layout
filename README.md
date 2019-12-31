@@ -20,8 +20,12 @@ Layout driven item readers and writers
             .column("roleKey", 1, 8)
             .column("role", 9, 20);
 
-FileLayoutItemReader reader = new FileLayoutItemReader();
+FileLayoutItemReader<MockUserRecord> reader = new FileLayoutItemReader();
 reader.setFileLayout(layout);
+
+FileLayoutItemWriter<MockUserRecord> writer = new FileLayoutItemWriter<>();
+writer.setFileLayout(layout);
+
 ```
 ## Delimited files
 ```java
@@ -34,6 +38,9 @@ FileLayout layout = new DelimitedFileLayout()
             .column("lastName")
             .column("dateOfBirth");
 
-FileLayoutItemReader reader = new FileLayoutItemReader();
+FileLayoutItemReader<MockUserRecord> reader = new FileLayoutItemReader();
 reader.setFileLayout(layout);
+
+FileLayoutItemWriter<MockUserRecord> writer = new FileLayoutItemWriter<>();
+writer.setFileLayout(layout);
 ```
