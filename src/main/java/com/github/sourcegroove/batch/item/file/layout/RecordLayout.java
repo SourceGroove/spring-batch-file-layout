@@ -1,4 +1,4 @@
-package com.bitblox.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.layout;
 
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;

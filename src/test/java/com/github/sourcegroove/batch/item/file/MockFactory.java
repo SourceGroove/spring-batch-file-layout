@@ -1,4 +1,4 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

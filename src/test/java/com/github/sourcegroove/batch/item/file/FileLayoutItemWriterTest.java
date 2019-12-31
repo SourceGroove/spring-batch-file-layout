@@ -1,8 +1,8 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
-import com.bitblox.batch.item.file.editors.LocalDateEditor;
-import com.bitblox.batch.item.file.layout.FileLayout;
-import com.bitblox.batch.item.file.layout.FixedWidthFileLayout;
+import com.github.sourcegroove.batch.item.file.editors.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.layout.FixedWidthFileLayout;
 import lombok.extern.java.Log;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;

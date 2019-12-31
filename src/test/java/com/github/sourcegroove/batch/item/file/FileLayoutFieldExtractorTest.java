@@ -1,6 +1,6 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
-import com.bitblox.batch.item.file.editors.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.editors.LocalDateEditor;
 import org.junit.Test;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 

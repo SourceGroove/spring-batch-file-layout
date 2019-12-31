@@ -1,6 +1,6 @@
-package com.bitblox.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.layout;
 
-import com.bitblox.batch.item.file.FileLayoutFieldExtractor;
+import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;

@@ -1,10 +1,8 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
-import com.bitblox.batch.item.file.layout.FileLayout;
-import com.bitblox.batch.item.file.layout.RecordLayout;
+import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
 import org.springframework.batch.item.file.FlatFileItemWriter;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
-import org.springframework.batch.item.file.transform.ExtractorLineAggregator;
 import org.springframework.util.Assert;
 
 public class FileLayoutItemWriter<T> extends FlatFileItemWriter<T> {

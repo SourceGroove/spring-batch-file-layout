@@ -1,4 +1,4 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
 import lombok.extern.java.Log;
 import org.springframework.batch.item.file.transform.FieldExtractor;

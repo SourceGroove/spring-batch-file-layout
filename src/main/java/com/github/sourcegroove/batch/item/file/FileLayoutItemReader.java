@@ -1,7 +1,7 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
-import com.bitblox.batch.item.file.layout.FileLayout;
-import com.bitblox.batch.item.file.layout.RecordLayout;
+import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;

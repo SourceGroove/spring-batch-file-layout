@@ -1,4 +1,4 @@
-package com.bitblox.batch.item.file.editors;
+package com.github.sourcegroove.batch.item.file.editors;
 
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;

@@ -1,4 +1,4 @@
-package com.bitblox.batch.item.file;
+package com.github.sourcegroove.batch.item.file;
 
 import lombok.Data;
 
