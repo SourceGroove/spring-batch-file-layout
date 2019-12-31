@@ -28,11 +28,11 @@ reader.setFileLayout(layout);
 FileLayout layout = new DelimitedFileLayout()
         .linesToSkip(1)
         .record(MockUserRecord.class)
-        .column("username")
-        .column("firstName")
-        .column("lastName")
-        .column("dateOfBirth")
-        .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"));
+            .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+            .column("username")
+            .column("firstName")
+            .column("lastName")
+            .column("dateOfBirth");
 
 FileLayoutItemReader reader = new FileLayoutItemReader();
 reader.setFileLayout(layout);
