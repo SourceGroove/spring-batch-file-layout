@@ -30,10 +30,6 @@ public class FixedWidthFileLayout implements FileLayout {
         this.currentRecordLayout.setPrefix(prefix);
         return this;
     }
-    public FixedWidthFileLayout column(String name){
-        this.currentRecordLayout.getFieldNames().add(name);
-        return this;
-    }
     public FixedWidthFileLayout column(String name, int start, int end){
         this.currentRecordLayout.getFieldNames().add(name);
         this.currentRecordLayout.getFieldRanges().add(new Range(start, end));
