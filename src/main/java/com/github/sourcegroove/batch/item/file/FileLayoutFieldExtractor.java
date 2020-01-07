@@ -6,9 +6,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 import java.beans.PropertyEditor;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Log
 public class FileLayoutFieldExtractor<T> implements FieldExtractor<T>, InitializingBean {
@@ -21,32 +21,38 @@ public class FileLayoutFieldExtractor<T> implements FieldExtractor<T>, Initializ
     public void setCustomEditors(Map<Class<?>, PropertyEditor> customEditors) {
         this.customEditors = customEditors;
     }
-    
+
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.fieldExtractor, "The 'fieldExtractor' property must be set.");
     }
-    
+
     @Override
     public Object[] extract(T object) {
         Object[] fields = this.fieldExtractor.extract(object);
         return format(fields);
     }
-    
-    private Object[] format(Object[] fields) {
-        List<Object> formattedFields = new ArrayList<>();
-        for(Object field : fields){
-            PropertyEditor editor = this.customEditors.get(field.getClass());
-            if(editor != null){
-                editor.setValue(field);
-                formattedFields.add(editor.getAsText());
-            } else {
-                formattedFields.add(field);
-            }
 
-        }
-        return formattedFields.toArray(new Object[formattedFields.size()]);
+    private Object[] format(Object[] fields) {
+        return Arrays.asList(fields)
+                .stream()
+                .map(f -> format(f))
+                .collect(Collectors.toList())
+                .toArray(new Object[fields.length]);
     }
 
-   
+    private Object format(Object field){
+        PropertyEditor editor = customEditors != null && field != null ? customEditors.get(field.getClass()) : null;
+
+        if(editor != null){
+            editor.setValue(field);
+            return editor.getAsText();
+
+        } else if (field != null) {
+            return field;
+
+        } else {
+            return "";
+        }
+    }
 }

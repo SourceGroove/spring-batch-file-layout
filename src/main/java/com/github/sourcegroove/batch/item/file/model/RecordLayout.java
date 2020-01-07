@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.model;
 
 
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -13,5 +13,5 @@ public interface RecordLayout {
     LineAggregator getLineAggregator();
     FieldSetMapper getFieldSetMapper();
     String getPrefix();
-    
+    Class getTargetType();
 }

@@ -1,29 +1,50 @@
 package com.github.sourcegroove.batch.item.file;
 
-import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
-import org.springframework.batch.item.file.FlatFileItemWriter;
+import com.github.sourcegroove.batch.item.file.model.FileLayout;
+import com.github.sourcegroove.batch.item.file.model.RecordLayout;
+import lombok.extern.java.Log;
+import org.springframework.batch.item.support.AbstractFileItemWriter;
 import org.springframework.util.Assert;
+import org.springframework.util.ClassUtils;
 
-public class FileLayoutItemWriter<T> extends FlatFileItemWriter<T> {
-    
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Log
+public class FileLayoutItemWriter<T> extends  AbstractFileItemWriter<T> {
+
     private FileLayout fileLayout;
+
+    public FileLayoutItemWriter() {
+        this.setExecutionContextName(ClassUtils.getShortName(FileLayoutItemWriter.class));
+    }
 
     public void setFileLayout(FileLayout fileLayout){
         this.fileLayout = fileLayout;
-        this.configure();
     }
 
     @Override
-    public void afterPropertiesSet() throws Exception{
+    public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.fileLayout, "The 'fileLayout' property must be set.");
-        super.afterPropertiesSet();
+        if (this.append) {
+            this.shouldDeleteIfExists = false;
+        }
     }
-    
-    private void configure(){
-        RecordLayout recordLayout = fileLayout.getRecordLayouts().get(0);
-        setLineAggregator(recordLayout.getLineAggregator());
+
+    @Override
+    protected String doWrite(List<? extends T> items) {
+        return items
+                .stream()
+                .map(i -> aggregate(i))
+                .collect(Collectors.joining());
     }
-    
-    
+
+    private String aggregate(T item){
+        RecordLayout recordLayout = this.fileLayout.getRecordLayout(item.getClass());
+        if(recordLayout == null){
+            throw new IllegalArgumentException("Unsupported record target type " + item.getClass() + ". Is it included in the file format?");
+        }
+        return recordLayout.getLineAggregator().aggregate(item) + this.lineSeparator;
+    }
+
 }

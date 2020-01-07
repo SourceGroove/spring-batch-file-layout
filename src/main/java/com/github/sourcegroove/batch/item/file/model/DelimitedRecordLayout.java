@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.model;
 
 import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -32,6 +32,9 @@ public class DelimitedRecordLayout implements RecordLayout {
     }
     public void setTargetType(Class targetType){
         this.targetType = targetType;
+    }
+    public Class getTargetType(){
+        return this.targetType;
     }
     public FieldSetMapper getFieldSetMapper(){
         BeanWrapperFieldSetMapper mapper = new BeanWrapperFieldSetMapper();

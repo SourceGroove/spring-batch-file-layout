@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.model;
 
 import lombok.Data;
 
@@ -12,7 +12,7 @@ public class DelimitedFileLayout implements FileLayout {
     private int linesToSkip = 0;
     private String delimeter = ",";
     private char qualifier = '"';
-    
+
     private List<RecordLayout> recordLayouts = new ArrayList<>();
     private DelimitedRecordLayout currentRecordLayout;
 

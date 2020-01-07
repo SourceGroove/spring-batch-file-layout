@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.model;
 
 import lombok.Data;
 import lombok.extern.java.Log;
@@ -39,5 +39,5 @@ public class FixedWidthFileLayout implements FileLayout {
         this.currentRecordLayout.getEditors().put(type, editor);
         return this;
     }
-    
+
 }

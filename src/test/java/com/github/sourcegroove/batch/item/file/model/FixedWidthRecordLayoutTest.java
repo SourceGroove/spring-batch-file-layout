@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.model;
 
 import org.junit.Test;
 import org.springframework.batch.item.file.transform.Range;
@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
-public class FixedWIdthRecordLayoutTest {
+public class FixedWidthRecordLayoutTest {
 
     @Test
     public void givenNonConsecutiveFieldsWhenFormatThenFiller(){

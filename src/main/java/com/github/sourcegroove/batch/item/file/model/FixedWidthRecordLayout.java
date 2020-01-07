@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout;
+package com.github.sourcegroove.batch.item.file.model;
 
 import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
 import org.apache.commons.lang3.StringUtils;
@@ -22,12 +22,15 @@ public class FixedWidthRecordLayout implements RecordLayout {
         MONTH,
         CONSTANT;
     }
-
-    private Class targetType;
     private String prefix = "*";
+    private Class targetType = null;
     private List<String> fieldNames = new ArrayList<>();
     private List<Range> fieldRanges = new ArrayList<>();
     private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+
+    private FieldSetMapper mapper;
+    private LineAggregator lineAggregator;
+    private LineTokenizer lineTokenizer;
 
     public Map<Class<?>, PropertyEditor> getEditors(){
         return this.editors;
@@ -47,6 +50,9 @@ public class FixedWidthRecordLayout implements RecordLayout {
     public void setTargetType(Class targetType){
         this.targetType = targetType;
     }
+    public Class getTargetType(){
+        return this.targetType;
+    }
     public String getPrefix(){
         return this.prefix;
     }
@@ -54,33 +60,42 @@ public class FixedWidthRecordLayout implements RecordLayout {
         this.prefix = prefix;
     }
     public FieldSetMapper getFieldSetMapper(){
-        BeanWrapperFieldSetMapper mapper = new BeanWrapperFieldSetMapper();
-        mapper.setTargetType(this.targetType);
-        mapper.setCustomEditors(this.editors);
-        return mapper;
+        if(this.mapper == null) {
+            BeanWrapperFieldSetMapper mapper = new BeanWrapperFieldSetMapper();
+            mapper.setTargetType(this.targetType);
+            mapper.setCustomEditors(this.editors);
+            this.mapper = mapper;
+        }
+        return this.mapper;
     }
-    
-    public LineAggregator getLineAggregator(){
-        BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
-        extractor.setNames(getFieldNameArray());
 
-        FileLayoutFieldExtractor fieldExtractor = new FileLayoutFieldExtractor();
-        fieldExtractor.setFieldExtractor(extractor);
-        fieldExtractor.setCustomEditors(this.editors);
-        
-        FormatterLineAggregator aggregator = new FormatterLineAggregator();
-        aggregator.setFieldExtractor(fieldExtractor);
-        aggregator.setFormat(getFormat());
-        
-        return aggregator;
+    public LineAggregator getLineAggregator(){
+        if(this.lineAggregator == null) {
+            BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
+            extractor.setNames(getFieldNameArray());
+
+            FileLayoutFieldExtractor fieldExtractor = new FileLayoutFieldExtractor();
+            fieldExtractor.setFieldExtractor(extractor);
+            fieldExtractor.setCustomEditors(this.editors);
+
+            FormatterLineAggregator aggregator = new FormatterLineAggregator();
+            aggregator.setFieldExtractor(fieldExtractor);
+            aggregator.setFormat(getFormat());
+
+            this.lineAggregator = aggregator;
+        }
+        return this.lineAggregator;
     }
     public LineTokenizer getLineTokenizer(){
-        FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
-        tokenizer.setNames(getFieldNameArray());
-        tokenizer.setColumns(getFieldRangeArray());
-        return tokenizer;
+        if(this.lineTokenizer == null) {
+            FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
+            tokenizer.setNames(getFieldNameArray());
+            tokenizer.setColumns(getFieldRangeArray());
+            this.lineTokenizer = tokenizer;
+        }
+        return this.lineTokenizer;
     }
-    
+
     public String getFormat(){
         StringBuilder format = new StringBuilder();
         Range previous = null;
