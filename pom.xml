@@ -8,7 +8,7 @@
         </license>
     </licenses>
 
-    <groupId>com.github.sourcegroove</groupId>
+    <groupId>com.github.sourcegroove.batch</groupId>
     <artifactId>spring-batch-file-layout</artifactId>
     <version>1.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
