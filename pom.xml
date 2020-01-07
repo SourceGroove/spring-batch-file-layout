@@ -22,6 +22,14 @@
         <tag>${project.version}</tag>
     </scm>
 
+    <developers>
+        <developer>
+            <id>SourceGroove</id>
+            <name>Seth Jordan</name>
+            <email>sethjordan@gmail.com</email>
+        </developer>
+    </developers>
+
 
     <properties>
         <java.version>1.8</java.version>
