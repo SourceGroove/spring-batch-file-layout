@@ -8,9 +8,9 @@
         </license>
     </licenses>
 
-    <groupId>com.github.sourcegroove.batch</groupId>
+    <groupId>com.github.sourcegroove</groupId>
     <artifactId>spring-batch-file-layout</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>spring-batch-file-layout</name>
     <description>Layout driven spring batch item readers and writers</description>
