@@ -19,6 +19,30 @@ public class MockFactory {
         return records;
     }
 
+    public static List<MockUserRecord> getUsers(long count){
+        List<MockUserRecord> records = new ArrayList<>();
+        for(int i=0; i < count; i++){
+            MockUserRecord r = new MockUserRecord();
+            r.setRecordType("USER");
+            r.setFirstName("First_" + i);
+            r.setLastName("Last_" + i);
+            r.setDateOfBirth(LocalDate.of(1978, 9, 30));
+            records.add(r);
+        }
+        return records;
+    }
+    public static List<MockRoleRecord> getRoles(long count){
+        List<MockRoleRecord> records = new ArrayList<>();
+        for(int i=0; i < count; i++){
+            MockRoleRecord r = new MockRoleRecord();
+            r.setRecordType("ROLE");
+            r.setRoleKey("KEY_" + i);
+            r.setRole("ROLE_" + i);
+            records.add(r);
+        }
+        return records;
+    }
+
     public static List<MockUserRecord> getUsers(){
         List<MockUserRecord> records = new ArrayList<>();
         records.add(getNeo());
