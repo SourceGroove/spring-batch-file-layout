@@ -10,7 +10,7 @@
         </license>
     </licenses>
 
-    <groupId>com.github.sourcegroove.batch.item.file</groupId>
+    <groupId>com.github.sourcegroove</groupId>
     <artifactId>spring-batch-file-layout</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
