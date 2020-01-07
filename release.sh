@@ -1,4 +1,3 @@
-mvn -B release:prepare release:perform
+git commit -a -m "Pre release" && git push
 
-#git push -–tags
-#git push origin master
+mvn -B release:prepare release:perform
