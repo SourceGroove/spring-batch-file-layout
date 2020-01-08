@@ -1,7 +1,6 @@
 package com.github.sourcegroove.batch.item.file;
 
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.support.AbstractFileItemWriter;
@@ -38,13 +37,9 @@ public class FileLayoutItemWriter<T> extends AbstractFileItemWriter<T> {
                 .map(i -> aggregate(i))
                 .collect(Collectors.joining());
     }
-
     private String aggregate(T item){
-        RecordLayout recordLayout = this.fileLayout.getRecordLayout(item.getClass());
-        if(recordLayout == null){
-            throw new IllegalArgumentException("Unsupported record target type " + item.getClass() + ". Is it included in the file format?");
-        }
-        return recordLayout.getLineAggregator().aggregate(item) + this.lineSeparator;
+        return fileLayout
+                .getLineAggregator(item.getClass())
+                .aggregate(item) + this.lineSeparator;
     }
-
 }

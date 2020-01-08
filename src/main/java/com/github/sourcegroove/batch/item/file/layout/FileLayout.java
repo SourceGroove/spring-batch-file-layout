@@ -1,27 +1,13 @@
 package com.github.sourcegroove.batch.item.file.layout;
 
-import org.apache.commons.collections4.CollectionUtils;
-
-import java.util.List;
+import org.springframework.batch.item.file.LineMapper;
+import org.springframework.batch.item.file.transform.LineAggregator;
 
 public interface FileLayout {
-    List<RecordLayout> getRecordLayouts();
+
     int getLinesToSkip();
+    boolean isValid();
+    LineMapper getLineMapper();
+    LineAggregator getLineAggregator(Class targetType);
 
-    default boolean isValid(){
-        return CollectionUtils.isNotEmpty(getRecordLayouts())
-                && !getRecordLayouts()
-                    .stream()
-                    .filter(r -> r.getTargetType() == null)
-                    .findFirst()
-                    .isPresent();
-    }
-
-    default RecordLayout getRecordLayout(Class targetType){
-        return getRecordLayouts()
-                .stream()
-                .filter(r -> r.getTargetType() == targetType)
-                .findFirst()
-                .orElse(null);
-    }
 }

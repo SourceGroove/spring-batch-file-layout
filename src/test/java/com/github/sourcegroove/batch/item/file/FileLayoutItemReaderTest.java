@@ -1,6 +1,8 @@
 package com.github.sourcegroove.batch.item.file;
 
 import com.github.sourcegroove.batch.item.file.editors.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.layout.delimited.builder.DelimitedFileLayoutBuilder;
+import com.github.sourcegroove.batch.item.file.layout.fixed.builder.FixedWidthFileLayoutBuilder;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
@@ -21,7 +23,7 @@ public class FileLayoutItemReaderTest {
 
     @Test
     public void givenFixedFileWithMultipleRecordTypesWhenReadThenRead() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .linesToSkip(1)
                 .record(MockUserRecord.class)
                     .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
@@ -37,6 +39,7 @@ public class FileLayoutItemReaderTest {
                     .column("recordType", 1, 4)
                     .column("roleKey", 5, 8)
                     .column("role", 9, 20)
+                .and()
                 .build();
 
         FileLayoutItemReader reader = new FileLayoutItemReader();
@@ -52,16 +55,16 @@ public class FileLayoutItemReaderTest {
 
     @Test
     public void givenFixedFileWhenReadThenRead() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .linesToSkip(1)
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
-                .column("recordType", 1, 4)
-                .column("username", 5, 10)
-                .column("firstName", 11, 20)
-                .column("lastName", 21, 30)
-                .column("dateOfBirth", 31, 38)
-                .build();
+                    .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                    .column("recordType", 1, 4)
+                    .column("username", 5, 10)
+                    .column("firstName", 11, 20)
+                    .column("lastName", 21, 30)
+                    .column("dateOfBirth", 31, 38)
+                    .and().build();
 
         FileLayoutItemReader reader = new FileLayoutItemReader();
         reader.setFileLayout(layout);
@@ -73,7 +76,7 @@ public class FileLayoutItemReaderTest {
 
     @Test
     public void givenCsvFileWithSpecialCharacterWhenReadThenRead() throws Exception {
-        FileLayout layout = new DelimitedFileLayout()
+        FileLayout layout = new DelimitedFileLayoutBuilder()
                 .linesToSkip(1)
                 .record(MockUserRecord.class)
                 .column("recordType")
@@ -82,7 +85,7 @@ public class FileLayoutItemReaderTest {
                 .column("lastName")
                 .column("dateOfBirth")
                 .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
-                .and();
+                .and().build();
 
         FileLayoutItemReader reader = new FileLayoutItemReader();
         reader.setFileLayout(layout);
@@ -94,7 +97,7 @@ public class FileLayoutItemReaderTest {
 
     @Test
     public void givenCsvFileWhenReadThenRead() throws Exception {
-        FileLayout layout = new DelimitedFileLayout()
+        FileLayout layout = new DelimitedFileLayoutBuilder()
                 .linesToSkip(1)
                 .record(MockUserRecord.class)
                 .column("recordType")
@@ -103,7 +106,7 @@ public class FileLayoutItemReaderTest {
                 .column("lastName")
                 .column("dateOfBirth")
                 .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
-                .build();
+                .and().build();
 
         FileLayoutItemReader reader = new FileLayoutItemReader();
         reader.setFileLayout(layout);

@@ -32,8 +32,11 @@
 
 
     <properties>
-        <java.version>1.8</java.version>
+        <!--<java.version>1.8</java.version>-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <spring.batch.version>4.2.1.RELEASE</spring.batch.version>
     </properties>
+
 
     <dependencies>
         <dependency>
@@ -56,7 +59,12 @@
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-core</artifactId>
-            <version>4.2.1.RELEASE</version>
+            <version>${spring.batch.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.batch</groupId>
+            <artifactId>spring-batch-excel</artifactId>
+            <version>0.5.0-SNAPSHOT</version>
         </dependency>
 
         <!-- test -->
@@ -183,7 +191,6 @@
                     <target>1.8</target>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 

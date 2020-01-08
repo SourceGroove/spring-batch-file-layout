@@ -1,79 +1,34 @@
 package com.github.sourcegroove.batch.item.file.layout.delimited;
 
-import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
-import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.transform.*;
-
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DelimitedRecordLayout implements RecordLayout {
-
-    private DelimitedFileLayout layout;
-    private Class targetType;
+public class DelimitedRecordLayout {
     private String prefix = "*";
+    private Class targetType;
     private List<String> fieldNames = new ArrayList<>();
     private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
 
-    public static DelimitedRecordLayout of(DelimitedFileLayout layout, Class targetType){
-        DelimitedRecordLayout r = new DelimitedRecordLayout();
-        r.layout = layout;
-        r.targetType = targetType;
-        return r;
-    }
-    public DelimitedFileLayout build(){
-        return this.layout;
-    }
-    public DelimitedFileLayout and(){
-        return this.layout;
-    }
-    public DelimitedRecordLayout prefix(String prefix){
-        this.prefix = prefix;
-        return this;
-    }
-    public DelimitedRecordLayout column(String name){
-        this.fieldNames.add(name);
-        return this;
-    }
-    public DelimitedRecordLayout editor(Class<?> type, PropertyEditor editor){
-        this.editors.put(type, editor);
-        return this;
-    }
-
-    public String getPrefix(){
-        return this.prefix;
-    }
     public Class getTargetType(){
         return this.targetType;
     }
-    public FieldSetMapper getFieldSetMapper(){
-        BeanWrapperFieldSetMapper mapper = new BeanWrapperFieldSetMapper();
-        mapper.setTargetType(this.targetType);
-        mapper.setCustomEditors(this.editors);
-        return mapper;
+    public void setTargetType(Class targetType){
+        this.targetType = targetType;
     }
-    public ExtractorLineAggregator getLineAggregator() {
-        BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
-        extractor.setNames(this.fieldNames.toArray(new String[this.fieldNames.size()]));
-
-        FileLayoutFieldExtractor fieldExtractor = new FileLayoutFieldExtractor();
-        fieldExtractor.setFieldExtractor(extractor);
-        fieldExtractor.setCustomEditors(this.editors);
-
-        DelimitedLineAggregator aggregator = new DelimitedLineAggregator();
-        aggregator.setFieldExtractor(fieldExtractor);
-
-        return aggregator;
+    public String getPrefix(){
+        return this.prefix;
     }
-    public LineTokenizer getLineTokenizer() {
-        DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames(this.fieldNames.toArray(new String[this.fieldNames.size()]));
-        return tokenizer;
+    public void setPrefix(String prefix){
+        this.prefix = prefix;
+    }
+    public Map<Class<?>, PropertyEditor> getEditors(){
+        return this.editors;
+    }
+    public List<String> getFieldNames(){
+        return this.fieldNames;
     }
 
 }

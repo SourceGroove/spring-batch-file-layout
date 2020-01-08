@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.layout.fixed;
+package com.github.sourcegroove.batch.item.file.layout.fixed.builder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.item.file.transform.Range;

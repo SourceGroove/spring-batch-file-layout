@@ -1,6 +1,7 @@
 package com.github.sourcegroove.batch.item.file;
 
 import com.github.sourcegroove.batch.item.file.editors.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.layout.fixed.builder.FixedWidthFileLayoutBuilder;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
@@ -23,7 +24,7 @@ public class FileLayoutItemWriterTest {
 
     @Test
     public void givenFixedLayoutWithMultipleRecordTypesWhenWriteAndReadAlotThenPerformant() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .record(MockUserRecord.class)
                     .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                     .prefix("USER*")
@@ -38,7 +39,7 @@ public class FileLayoutItemWriterTest {
                     .column("recordType", 1, 4)
                     .column("roleKey", 5, 8)
                     .column("role", 9, 20)
-                .build();
+                .and().build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-load.txt");
 
@@ -60,7 +61,7 @@ public class FileLayoutItemWriterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void givenFixedLayoutWhenWriteRecordTypesNotInLayoutThenError() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .record(MockUserRecord.class)
                     .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                     .prefix("user*")
@@ -68,7 +69,7 @@ public class FileLayoutItemWriterTest {
                     .column("firstName", 11, 20)
                     .column("lastName", 31, 40)
                     .column("dateOfBirth", 41, 48)
-                .build();
+                .and().build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-missing-record-type.txt");
 
@@ -81,7 +82,7 @@ public class FileLayoutItemWriterTest {
 
     @Test
     public void givenFixedLayoutWithMultipleRecordTypesWhenWrittenThenAllTypesWritten() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .record(MockUserRecord.class)
                     .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                     .prefix("USER*")
@@ -96,7 +97,7 @@ public class FileLayoutItemWriterTest {
                     .column("recordType", 1, 4)
                     .column("roleKey", 5, 8)
                     .column("role", 9, 20)
-                .build();
+                .and().build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-multiple-record-types.txt");
 
@@ -123,7 +124,7 @@ public class FileLayoutItemWriterTest {
 
     @Test
     public void givenFixedLayoutAndRecordsWithFillerWhenWriteThenWrittenWithFiller() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .record(MockUserRecord.class)
                 .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                 .prefix("USER*")
@@ -132,7 +133,7 @@ public class FileLayoutItemWriterTest {
                 .column("firstName", 11, 20)
                 .column("lastName", 31, 40)
                 .column("dateOfBirth", 41, 48)
-                .build();
+                .and().build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-filler.txt");
 
@@ -153,16 +154,16 @@ public class FileLayoutItemWriterTest {
 
     @Test
     public void givenFixedLayoutAndRecordsWithNoFillerWhenWriteThenWriten() throws Exception {
-        FileLayout layout = new FixedWidthFileLayout()
+        FileLayout layout = new FixedWidthFileLayoutBuilder()
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
-                .prefix("USER*")
-                .column("recordType", 1, 4)
-                .column("username", 5, 10)
-                .column("firstName", 11, 20)
-                .column("lastName", 21, 30)
-                .column("dateOfBirth", 31, 38)
-                .build();
+                    .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                    .prefix("USER*")
+                    .column("recordType", 1, 4)
+                    .column("username", 5, 10)
+                    .column("firstName", 11, 20)
+                    .column("lastName", 21, 30)
+                    .column("dateOfBirth", 31, 38)
+                .and().build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-no-filler.txt");
         FileLayoutItemWriter<MockUserRecord> writer = new FileLayoutItemWriter<>();
