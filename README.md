@@ -21,10 +21,27 @@ different file specifications that:
 Using this library, we were able to create two simple SpringBatch jobs - one for import and one for export - we just supply the layout and 
 a physical file at runtime.   
 
-# Declarative file layouts can be used to create ItemReaders and ItemWriters
+# Dependency
+
+## Maven
+```
+<dependency>
+  <groupId>com.github.sourcegroove</groupId>
+  <artifactId>spring-batch-file-layout</artifactId>
+  <version>1.0.3</version>
+</dependency>
+```
+
+## Gradle
+```
+implementation 'com.github.sourcegroove:spring-batch-file-layout:1.0.3'
+```
+# Declarative file layouts are used to create ItemReaders and ItemWriters
 All you need to do is define your delimited or fixed width file layout and pass it to the FileLayoutItemReader or FileLayoutItemWriter.  By default, the
 FlatFileItemX implementations uses Spring's BeanWrapperFieldSetMapper & BeanWrapperFieldExtractor to map your POJO's properties to either column 'Ranges' 
 in a fixed width file or column order in a delimited file.  
+
+You can, of course, override this by changing the FieldSetMapper/FieldExtractor on the ItemReader/Writers if you need to.
 
 ```java
 FileLayout layout = new FixedWidthFileLayout()
@@ -47,7 +64,7 @@ writer.setFileLayout(layout);
 There are two implementations of the FileLayout interface - FixedWidthFileLayout & DelimitedFileLayout.  Each of these
 contains a collection of 'record layouts' that define the records in the file.
 
-* Defining layouts in Java is simple, but they can also be dynamically defined at runtime using persisted data
+Defining layouts in Java is simple, but they can also be dynamically defined at runtime using persisted data
 
 ## Fixed width file layout simple
 ```java
