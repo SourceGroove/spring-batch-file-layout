@@ -28,13 +28,13 @@ a physical file at runtime.
 <dependency>
   <groupId>com.github.sourcegroove</groupId>
   <artifactId>spring-batch-file-layout</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.7</version>
 </dependency>
 ```
 
 ## Gradle Dependency
 ```
-implementation 'com.github.sourcegroove:spring-batch-file-layout:1.0.3'
+implementation 'com.github.sourcegroove:spring-batch-file-layout:1.0.7'
 ```
 # Declarative file layouts are used to create ItemReaders and ItemWriters
 All you need to do is define your delimited or fixed width file layout and pass it to the FileLayoutItemReader or FileLayoutItemWriter.  By default, the
