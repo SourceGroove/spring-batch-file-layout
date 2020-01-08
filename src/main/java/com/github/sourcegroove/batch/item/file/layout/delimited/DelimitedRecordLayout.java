@@ -1,7 +1,7 @@
-package com.github.sourcegroove.batch.item.file.model.delimited;
+package com.github.sourcegroove.batch.item.file.layout.delimited;
 
 import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
-import com.github.sourcegroove.batch.item.file.model.RecordLayout;
+import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.*;
@@ -26,7 +26,6 @@ public class DelimitedRecordLayout implements RecordLayout {
         r.targetType = targetType;
         return r;
     }
-
     public DelimitedFileLayout build(){
         return this.layout;
     }
@@ -52,13 +51,6 @@ public class DelimitedRecordLayout implements RecordLayout {
     public Class getTargetType(){
         return this.targetType;
     }
-    public Map<Class<?>, PropertyEditor> getEditors(){
-        return this.editors;
-    }
-    public List<String> getFieldNames(){
-        return this.fieldNames;
-    }
-
     public FieldSetMapper getFieldSetMapper(){
         BeanWrapperFieldSetMapper mapper = new BeanWrapperFieldSetMapper();
         mapper.setTargetType(this.targetType);
@@ -67,7 +59,7 @@ public class DelimitedRecordLayout implements RecordLayout {
     }
     public ExtractorLineAggregator getLineAggregator() {
         BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
-        extractor.setNames(getFieldNameArray());
+        extractor.setNames(this.fieldNames.toArray(new String[this.fieldNames.size()]));
 
         FileLayoutFieldExtractor fieldExtractor = new FileLayoutFieldExtractor();
         fieldExtractor.setFieldExtractor(extractor);
@@ -78,14 +70,10 @@ public class DelimitedRecordLayout implements RecordLayout {
 
         return aggregator;
     }
-
     public LineTokenizer getLineTokenizer() {
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames(getFieldNameArray());
+        tokenizer.setNames(this.fieldNames.toArray(new String[this.fieldNames.size()]));
         return tokenizer;
     }
 
-    private String[] getFieldNameArray() {
-        return this.fieldNames.toArray(new String[this.fieldNames.size()]);
-    }
 }

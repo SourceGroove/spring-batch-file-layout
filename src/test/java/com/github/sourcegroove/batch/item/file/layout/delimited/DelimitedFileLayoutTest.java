@@ -1,6 +1,5 @@
-package com.github.sourcegroove.batch.item.file.model.delimited;
+package com.github.sourcegroove.batch.item.file.layout.delimited;
 
-import com.github.sourcegroove.batch.item.file.model.delimited.DelimitedFileLayout;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

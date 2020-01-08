@@ -1,7 +1,7 @@
-package com.github.sourcegroove.batch.item.file.model.fixed;
+package com.github.sourcegroove.batch.item.file.layout.fixed;
 
-import com.github.sourcegroove.batch.item.file.model.FileLayout;
-import com.github.sourcegroove.batch.item.file.model.RecordLayout;
+import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
 
 import java.util.ArrayList;
 import java.util.List;

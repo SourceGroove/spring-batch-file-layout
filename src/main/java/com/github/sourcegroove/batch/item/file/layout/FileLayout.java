@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.model;
+package com.github.sourcegroove.batch.item.file.layout;
 
 import org.apache.commons.collections4.CollectionUtils;
 

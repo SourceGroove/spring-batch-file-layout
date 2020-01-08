@@ -4,9 +4,9 @@ import com.github.sourcegroove.batch.item.file.editors.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
-import com.github.sourcegroove.batch.item.file.model.delimited.DelimitedFileLayout;
-import com.github.sourcegroove.batch.item.file.model.FileLayout;
-import com.github.sourcegroove.batch.item.file.model.fixed.FixedWidthFileLayout;
+import com.github.sourcegroove.batch.item.file.layout.delimited.DelimitedFileLayout;
+import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.layout.fixed.FixedWidthFileLayout;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 

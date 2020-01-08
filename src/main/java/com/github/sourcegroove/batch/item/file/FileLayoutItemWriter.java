@@ -1,7 +1,7 @@
 package com.github.sourcegroove.batch.item.file;
 
-import com.github.sourcegroove.batch.item.file.model.FileLayout;
-import com.github.sourcegroove.batch.item.file.model.RecordLayout;
+import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.layout.RecordLayout;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.support.AbstractFileItemWriter;
