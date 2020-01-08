@@ -2,16 +2,21 @@ package com.github.sourcegroove.batch.item.file;
 
 import com.github.sourcegroove.batch.item.file.model.FileLayout;
 import com.github.sourcegroove.batch.item.file.model.RecordLayout;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.LineTokenizer;
+import org.springframework.batch.item.support.AbstractFileItemWriter;
 import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class FileLayoutItemReader<T> extends FlatFileItemReader<T> {
+    protected static final Log log = LogFactory.getLog(FileLayoutItemReader.class);
+
     private FileLayout fileLayout;
 
     public void setFileLayout(FileLayout fileLayout){
@@ -22,6 +27,7 @@ public class FileLayoutItemReader<T> extends FlatFileItemReader<T> {
     @Override
     public void afterPropertiesSet() throws Exception{
         Assert.notNull(this.fileLayout, "The 'fileLayout' property must be set.");
+        Assert.isTrue(this.fileLayout.isValid(), "'fileLayout' is invalid");
         super.afterPropertiesSet();
     }
 
@@ -35,10 +41,8 @@ public class FileLayoutItemReader<T> extends FlatFileItemReader<T> {
         PatternMatchingCompositeLineMapper lineMapper = new PatternMatchingCompositeLineMapper();
         lineMapper.setFieldSetMappers(mappers);
         lineMapper.setTokenizers(tokenizers);
-
         setLinesToSkip(fileLayout.getLinesToSkip());
         setLineMapper(lineMapper);
+        log.debug("File layout item reader configured");
     }
-
-
 }

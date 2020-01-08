@@ -1,9 +1,11 @@
 package com.github.sourcegroove.batch.item.file;
 
 import com.github.sourcegroove.batch.item.file.editors.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.mock.MockFactory;
+import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
+import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import com.github.sourcegroove.batch.item.file.model.FileLayout;
-import com.github.sourcegroove.batch.item.file.model.FixedWidthFileLayout;
-import lombok.extern.java.Log;
+import com.github.sourcegroove.batch.item.file.model.fixed.FixedWidthFileLayout;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
@@ -14,9 +16,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
-@Log
 public class FileLayoutItemWriterTest {
     private static final String EXPORT_DIR = "./target/test-classes/files/";
 
@@ -24,18 +25,20 @@ public class FileLayoutItemWriterTest {
     public void givenFixedLayoutWithMultipleRecordTypesWhenWriteAndReadAlotThenPerformant() throws Exception {
         FileLayout layout = new FixedWidthFileLayout()
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
-                .prefix("USER*")
-                .column("recordType", 1, 4)
-                .column("username", 5, 10)
-                .column("firstName", 11, 20)
-                .column("lastName", 31, 40)
-                .column("dateOfBirth", 41, 48)
+                    .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                    .prefix("USER*")
+                    .column("recordType", 1, 4)
+                    .column("username", 5, 10)
+                    .column("firstName", 11, 20)
+                    .column("lastName", 31, 40)
+                    .column("dateOfBirth", 41, 48)
+                .and()
                 .record(MockRoleRecord.class)
-                .prefix("ROLE*")
-                .column("recordType", 1, 4)
-                .column("roleKey", 5, 8)
-                .column("role", 9, 20);
+                    .prefix("ROLE*")
+                    .column("recordType", 1, 4)
+                    .column("roleKey", 5, 8)
+                    .column("role", 9, 20)
+                .build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-load.txt");
 
@@ -52,7 +55,7 @@ public class FileLayoutItemWriterTest {
         watch.start();
         writer.write(records);
         watch.stop();
-        assertTrue("Time=" + watch.getTime(), watch.getTime() <= 400);
+        assertTrue("Time=" + watch.getTime(), watch.getTime() <= 500);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -64,7 +67,8 @@ public class FileLayoutItemWriterTest {
                     .column("username", 1, 10)
                     .column("firstName", 11, 20)
                     .column("lastName", 31, 40)
-                    .column("dateOfBirth", 41, 48);
+                    .column("dateOfBirth", 41, 48)
+                .build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-missing-record-type.txt");
 
@@ -86,11 +90,13 @@ public class FileLayoutItemWriterTest {
                     .column("firstName", 11, 20)
                     .column("lastName", 31, 40)
                     .column("dateOfBirth", 41, 48)
+                .and()
                 .record(MockRoleRecord.class)
                     .prefix("ROLE*")
                     .column("recordType", 1, 4)
                     .column("roleKey", 5, 8)
-                    .column("role", 9, 20);
+                    .column("role", 9, 20)
+                .build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-multiple-record-types.txt");
 
@@ -125,7 +131,8 @@ public class FileLayoutItemWriterTest {
                 .column("username", 5, 10)
                 .column("firstName", 11, 20)
                 .column("lastName", 31, 40)
-                .column("dateOfBirth", 41, 48);
+                .column("dateOfBirth", 41, 48)
+                .build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-filler.txt");
 
@@ -154,7 +161,8 @@ public class FileLayoutItemWriterTest {
                 .column("username", 5, 10)
                 .column("firstName", 11, 20)
                 .column("lastName", 21, 30)
-                .column("dateOfBirth", 31, 38);
+                .column("dateOfBirth", 31, 38)
+                .build();
 
         Resource file = new FileSystemResource(EXPORT_DIR + "sample-file-output-no-filler.txt");
         FileLayoutItemWriter<MockUserRecord> writer = new FileLayoutItemWriter<>();

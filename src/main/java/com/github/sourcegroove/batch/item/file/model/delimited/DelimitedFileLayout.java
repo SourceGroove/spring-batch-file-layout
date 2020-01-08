@@ -1,12 +1,11 @@
-package com.github.sourcegroove.batch.item.file.model;
+package com.github.sourcegroove.batch.item.file.model.delimited;
 
-import lombok.Data;
+import com.github.sourcegroove.batch.item.file.model.FileLayout;
+import com.github.sourcegroove.batch.item.file.model.RecordLayout;
 
-import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 public class DelimitedFileLayout implements FileLayout {
 
     private int linesToSkip = 0;
@@ -16,6 +15,16 @@ public class DelimitedFileLayout implements FileLayout {
     private List<RecordLayout> recordLayouts = new ArrayList<>();
     private DelimitedRecordLayout currentRecordLayout;
 
+
+    @Override
+    public List<RecordLayout> getRecordLayouts() {
+        return this.recordLayouts;
+    }
+
+    @Override
+    public int getLinesToSkip() {
+        return this.linesToSkip;
+    }
 
     public DelimitedFileLayout delimeter(String delimeter){
         this.delimeter = delimeter;
@@ -30,23 +39,10 @@ public class DelimitedFileLayout implements FileLayout {
         this.linesToSkip = linesToSkip;
         return this;
     }
-    public DelimitedFileLayout record(Class targetType){
-        this.currentRecordLayout = new DelimitedRecordLayout();
-        this.currentRecordLayout.setTargetType(targetType);
+    public DelimitedRecordLayout record(Class targetType){
+        this.currentRecordLayout = DelimitedRecordLayout.of(this, targetType);
         this.recordLayouts.add(this.currentRecordLayout);
-        return this;
-    }
-    public DelimitedFileLayout prefix(String prefix){
-        this.currentRecordLayout.setPrefix(prefix);
-        return this;
-    }
-    public DelimitedFileLayout column(String name){
-        this.currentRecordLayout.getFieldNames().add(name);
-        return this;
-    }
-    public DelimitedFileLayout editor(Class<?> type, PropertyEditor editor){
-        this.currentRecordLayout.getEditors().put(type, editor);
-        return this;
+        return this.currentRecordLayout;
     }
 
 }

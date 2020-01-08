@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file;
+package com.github.sourcegroove.batch.item.file.mock;
 
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;

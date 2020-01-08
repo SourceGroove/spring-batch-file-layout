@@ -12,7 +12,6 @@ public class LocalDateTimeEditor extends PropertyEditorSupport {
     private static final String DEFAULT_FORMAT = "yyyyMMdd HH:mm:ss";
     private DateTimeFormatter formatter;
 
-
     public LocalDateTimeEditor(){
         this.formatter = DateTimeFormatter.ofPattern(DEFAULT_FORMAT);
     }

@@ -1,6 +1,7 @@
-package com.github.sourcegroove.batch.item.file.model;
+package com.github.sourcegroove.batch.item.file.model.fixed;
 
 import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
+import com.github.sourcegroove.batch.item.file.model.RecordLayout;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -22,6 +23,7 @@ public class FixedWidthRecordLayout implements RecordLayout {
         MONTH,
         CONSTANT;
     }
+    private FixedWidthFileLayout layout;
     private String prefix = "*";
     private Class targetType = null;
     private List<String> fieldNames = new ArrayList<>();
@@ -32,23 +34,38 @@ public class FixedWidthRecordLayout implements RecordLayout {
     private LineAggregator lineAggregator;
     private LineTokenizer lineTokenizer;
 
-    public Map<Class<?>, PropertyEditor> getEditors(){
-        return this.editors;
+    public static FixedWidthRecordLayout of(FixedWidthFileLayout layout, Class targetType){
+        FixedWidthRecordLayout r = new FixedWidthRecordLayout();
+        r.layout = layout;
+        r.targetType = targetType;
+        return r;
     }
-    public List<Range> getFieldRanges(){
-        return this.fieldRanges;
+
+    public FixedWidthFileLayout build(){
+        return this.layout;
     }
+    public FixedWidthFileLayout and(){
+        return this.layout;
+    }
+    public FixedWidthRecordLayout prefix(String prefix){
+        this.prefix = prefix;
+        return this;
+    }
+    public FixedWidthRecordLayout column(String name, int start, int end){
+        this.fieldNames.add(name);
+        this.fieldRanges.add(new Range(start, end));
+        return this;
+    }
+    public FixedWidthRecordLayout editor(Class<?> type, PropertyEditor editor){
+        this.editors.put(type, editor);
+        return this;
+    }
+
     protected void setFieldRanges(List<Range> fieldRanges){
         this.fieldRanges = fieldRanges;
     }
-    public List<String> getFieldNames(){
-        return this.fieldNames;
-    }
     protected void setFieldNames(List<String> fieldNames){
         this.fieldNames = fieldNames;
-    }
-    public void setTargetType(Class targetType){
-        this.targetType = targetType;
     }
     public Class getTargetType(){
         return this.targetType;
@@ -56,9 +73,7 @@ public class FixedWidthRecordLayout implements RecordLayout {
     public String getPrefix(){
         return this.prefix;
     }
-    public void setPrefix(String prefix){
-        this.prefix = prefix;
-    }
+
     public FieldSetMapper getFieldSetMapper(){
         if(this.mapper == null) {
             BeanWrapperFieldSetMapper mapper = new BeanWrapperFieldSetMapper();

@@ -1,5 +1,6 @@
-package com.github.sourcegroove.batch.item.file.model;
+package com.github.sourcegroove.batch.item.file.model.fixed;
 
+import com.github.sourcegroove.batch.item.file.model.fixed.FixedWidthRecordLayout;
 import org.junit.Test;
 import org.springframework.batch.item.file.transform.Range;
 

@@ -1,7 +1,7 @@
 package com.github.sourcegroove.batch.item.file.editors;
 
-import lombok.extern.java.Log;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.StringUtils;
 
@@ -9,8 +9,8 @@ import java.beans.PropertyEditorSupport;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@Slf4j
 public class LocalDateEditor extends PropertyEditorSupport {
+    protected static final Log log = LogFactory.getLog(LocalDateEditor.class);
 
     private static final String DEFAULT_FORMAT = "yyyyMMdd";
     private DateTimeFormatter formatter;
@@ -31,7 +31,7 @@ public class LocalDateEditor extends PropertyEditorSupport {
             try {
                 this.setValue(LocalDate.parse(text, formatter));
             } catch (Throwable t) {
-                log.error("Unable to parse LocalDate from {} using {}", text, formatter.toFormat());
+                log.error("Unable to parse LocalDate from " + text + " using " +  formatter.toFormat());
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.github.sourcegroove.batch.item.file;
 
-import lombok.extern.java.Log;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
@@ -10,8 +11,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Log
 public class FileLayoutFieldExtractor<T> implements FieldExtractor<T>, InitializingBean {
+    protected static final Log log = LogFactory.getLog(FileLayoutFieldExtractor.class);
     private FieldExtractor<T> fieldExtractor;
     private Map<Class<?>, PropertyEditor> customEditors;
 
