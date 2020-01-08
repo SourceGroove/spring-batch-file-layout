@@ -21,9 +21,9 @@ different file specifications that:
 Using this library, we were able to create two simple SpringBatch jobs - one for import and one for export - we just supply the layout and 
 a physical file at runtime.   
 
-# Dependency
+# Usage
 
-## Maven
+## Maven Dependency
 ```
 <dependency>
   <groupId>com.github.sourcegroove</groupId>
@@ -32,7 +32,7 @@ a physical file at runtime.
 </dependency>
 ```
 
-## Gradle
+## Gradle Dependency
 ```
 implementation 'com.github.sourcegroove:spring-batch-file-layout:1.0.3'
 ```
