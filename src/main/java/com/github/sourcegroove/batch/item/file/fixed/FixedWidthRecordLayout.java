@@ -1,9 +1,6 @@
-package com.github.sourcegroove.batch.item.file.layout.fixed;
+package com.github.sourcegroove.batch.item.file.fixed;
 
-import com.github.sourcegroove.batch.item.file.FileLayoutFieldExtractor;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
-import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.transform.*;
+import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
 import java.util.ArrayList;

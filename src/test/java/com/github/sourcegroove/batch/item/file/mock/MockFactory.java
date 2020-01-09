@@ -1,6 +1,7 @@
 package com.github.sourcegroove.batch.item.file.mock;
 
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.time.LocalDate;
@@ -11,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MockFactory {
+
+    private static final String EXPORT_DIR = "./target/test-classes/files/";
 
     public static List<MockRoleRecord> getRoles(){
         List<MockRoleRecord> records = new ArrayList<>();
@@ -82,6 +85,9 @@ public class MockFactory {
         assertEquals(r.getDateOfBirth(), record.getDateOfBirth());
     }
 
+    public static Resource createResource(String file){
+        return new FileSystemResource(EXPORT_DIR + "sample-file-output-filler.txt");
+    }
     public static Resource getResource(String file){
         return new ClassPathResource("files/" + file);
     }

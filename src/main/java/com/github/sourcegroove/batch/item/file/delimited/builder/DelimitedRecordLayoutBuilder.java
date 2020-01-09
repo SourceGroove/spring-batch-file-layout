@@ -1,7 +1,6 @@
-package com.github.sourcegroove.batch.item.file.layout.delimited.builder;
+package com.github.sourcegroove.batch.item.file.delimited.builder;
 
-import com.github.sourcegroove.batch.item.file.layout.delimited.DelimitedRecordLayout;
-import com.github.sourcegroove.batch.item.file.layout.fixed.builder.FixedWidthRecordLayoutBuilder;
+import com.github.sourcegroove.batch.item.file.delimited.DelimitedRecordLayout;
 
 import java.beans.PropertyEditor;
 
@@ -26,10 +25,6 @@ public class DelimitedRecordLayoutBuilder {
     }
     public DelimitedRecordLayoutBuilder column(String name){
         this.recordLayout.getFieldNames().add(name);
-        return this;
-    }
-    public DelimitedRecordLayoutBuilder prefix(String prefix){
-        this.recordLayout.setPrefix(prefix);
         return this;
     }
     public DelimitedRecordLayoutBuilder editor(Class<?> type, PropertyEditor editor){

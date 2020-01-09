@@ -1,6 +1,5 @@
-package com.github.sourcegroove.batch.item.file.layout.fixed.builder;
+package com.github.sourcegroove.batch.item.file.fixed.builder;
 
-import com.github.sourcegroove.batch.item.file.layout.fixed.builder.StringFormatBuilder;
 import org.junit.Test;
 
 import java.time.LocalDate;

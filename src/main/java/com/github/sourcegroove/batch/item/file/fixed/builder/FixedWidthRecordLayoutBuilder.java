@@ -1,6 +1,6 @@
-package com.github.sourcegroove.batch.item.file.layout.fixed.builder;
+package com.github.sourcegroove.batch.item.file.fixed.builder;
 
-import com.github.sourcegroove.batch.item.file.layout.fixed.FixedWidthRecordLayout;
+import com.github.sourcegroove.batch.item.file.fixed.FixedWidthRecordLayout;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
