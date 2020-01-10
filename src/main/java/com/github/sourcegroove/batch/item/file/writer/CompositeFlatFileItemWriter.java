@@ -16,6 +16,7 @@ public class CompositeFlatFileItemWriter<T> extends AbstractFileItemWriter<T> {
     private Map<Class, LineAggregator> lineAggregators;
 
     public CompositeFlatFileItemWriter() {
+        super();
         this.setName(ClassUtils.getShortName(this.getClass()));
     }
     public void setLineAggregators(Map<Class, LineAggregator> lineAggregators){

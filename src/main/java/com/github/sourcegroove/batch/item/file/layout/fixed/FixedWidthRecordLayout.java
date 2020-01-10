@@ -1,7 +1,5 @@
 package com.github.sourcegroove.batch.item.file.layout.fixed;
 
-import com.github.sourcegroove.batch.item.file.layout.delimited.DelimitedFileLayout;
-import com.github.sourcegroove.batch.item.file.layout.delimited.DelimitedRecordLayout;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.batch.item.file.transform.Range;
 

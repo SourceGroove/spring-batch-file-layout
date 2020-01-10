@@ -10,18 +10,18 @@ import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 
 import java.time.LocalDate;
 
+import static org.junit.Assert.assertNull;
+
 public class ExcelFileLayoutTest {
 
     private static final String SAMPLE_FILE = "sample-file.xlsx";
-    private static final String SAMPLE_FILE_MULTIPLE_SHEETS_SAME_LAYOUT = "sample-file-multiple-sheets-same-layout.xlsx";
-    private static final String SAMPLE_FILE_MULTIPLE_SHEETS_AND_LAYOUTS = "sample-file-multiple-sheets.xlsx";
 
     @Test
-    public void givenFileWhenReadThenRead() throws Exception {
+    public void givenFileWhenReadFirstSheetThenRead() throws Exception {
         FileLayout layout = new ExcelFileLayout()
-                .sheet()
-                    .linesToSkip(1)
-                    .record(MockUserRecord.class)
+                .sheetIndex(0)
+                .linesToSkip(1)
+                    .sheet(MockUserRecord.class)
                     .column("recordType")
                     .column("username")
                     .column("firstName")
@@ -35,14 +35,15 @@ public class ExcelFileLayoutTest {
         reader.open(new ExecutionContext());
         MockFactory.assertNeo((MockUserRecord) reader.read());
         MockFactory.assertTrinity((MockUserRecord) reader.read());
+        assertNull(reader.read());
     }
 
     @Test
-    public void givenFileWithMultipleSheetsOfTheSameLayoutWhenReadThenRead() throws Exception {
+    public void givenFileWhenReadMiddleSheetOnlyThenRead() throws Exception {
         FileLayout layout = new ExcelFileLayout()
-                .sheet()
                 .linesToSkip(1)
-                .record(MockUserRecord.class)
+                .sheet(MockUserRecord.class)
+                .sheetIndex(1)
                 .column("recordType")
                 .column("username")
                 .column("firstName")
@@ -52,8 +53,31 @@ public class ExcelFileLayoutTest {
                 .layout();
 
         ResourceAwareItemReaderItemStream<MockUserRecord> reader = layout.getItemReader();
-        reader.setResource(MockFactory.getResource(SAMPLE_FILE_MULTIPLE_SHEETS_SAME_LAYOUT));
+        reader.setResource(MockFactory.getResource(SAMPLE_FILE));
         reader.open(new ExecutionContext());
+        MockFactory.assertNeo((MockUserRecord) reader.read());
+        MockFactory.assertTrinity((MockUserRecord) reader.read());
+        assertNull(reader.read());
+    }
+
+    @Test
+    public void givenFileWhenReadAllSheetsThenRead() throws Exception {
+        FileLayout layout = new ExcelFileLayout()
+                .linesToSkip(1)
+                .sheet(MockUserRecord.class)
+                .column("recordType")
+                .column("username")
+                .column("firstName")
+                .column("lastName")
+                .column("dateOfBirth")
+                .editor(LocalDate.class, new LocalDateEditor())
+                .layout();
+
+        ResourceAwareItemReaderItemStream<MockUserRecord> reader = layout.getItemReader();
+        reader.setResource(MockFactory.getResource(SAMPLE_FILE));
+        reader.open(new ExecutionContext());
+        MockFactory.assertNeo((MockUserRecord) reader.read());
+        MockFactory.assertTrinity((MockUserRecord) reader.read());
         MockFactory.assertNeo((MockUserRecord) reader.read());
         MockFactory.assertTrinity((MockUserRecord) reader.read());
         MockFactory.assertNeo((MockUserRecord) reader.read());

@@ -6,28 +6,47 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.PropertyEditor;
+import java.util.*;
 
 public class ExcelFileLayout implements FileLayout {
     protected static final Log log = LogFactory.getLog(ExcelFileLayout.class);
 
-    private List<ExcelSheetLayout> sheets = new ArrayList<>();
-    private ExcelSheetLayout getCurrent(){
-        return this.sheets.get(this.sheets.size() - 1);
-    }
 
-    public ExcelSheetLayout sheet() {
-        this.sheets.add(new ExcelSheetLayout(this));
-        return getCurrent();
+    private Class targetType;
+    private List<String> columns = new ArrayList<>();
+    private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+    private Set<Integer> sheetsToRead;
+    private int linesToSkip = 0;
+
+    public ExcelFileLayout sheet(Class targetType) {
+        if(this.targetType != null){
+            throw new IllegalArgumentException("Record already defined");
+        }
+        this.targetType = targetType;
+        return this;
     }
-    public ExcelSheetLayout sheet(String name) {
-        this.sheets.add(new ExcelSheetLayout(this).name(name));
-        return getCurrent();
+    public ExcelFileLayout sheetIndex(int sheetIndex){
+        if(this.sheetsToRead == null){
+            this.sheetsToRead = new HashSet<>();
+        }
+        this.sheetsToRead.add(sheetIndex);
+        return this;
     }
-    public ExcelSheetLayout sheet(int position) {
-        this.sheets.add(new ExcelSheetLayout(this).position(position));
-        return getCurrent();
+    public ExcelFileLayout linesToSkip(int linesToSkip){
+        this.linesToSkip = linesToSkip;
+        return this;
+    }
+    public ExcelFileLayout column(String column){
+        this.columns.add(column);
+        return this;
+    }
+    public ExcelFileLayout editor(Class clazz, PropertyEditor editor){
+        this.editors.put(clazz, editor);
+        return this;
+    }
+    public ExcelFileLayout layout(){
+        return this;
     }
 
     @Override
@@ -35,24 +54,29 @@ public class ExcelFileLayout implements FileLayout {
         return null;
     }
 
-    @Override
-    public ExcelItemReader getItemReader() {
-        ExcelSheetLayout sheetLayout = getCurrent();
-        ExcelRecordLayout recordLayout = sheetLayout.getRecords().get(0);
+    public ExcelItemReader getItemReader(){
+
+        ExcelRowTokenizer tokenizer = new ExcelRowTokenizer();
+        tokenizer.setNames(getColumns());
 
         BeanWrapperFieldSetMapper fieldSetMapper = new BeanWrapperFieldSetMapper();
-        fieldSetMapper.setTargetType(recordLayout.getTargetType());
-        fieldSetMapper.setCustomEditors(recordLayout.getEditors());
+        fieldSetMapper.setTargetType(this.targetType);
+        fieldSetMapper.setCustomEditors(this.editors);
 
-        ExcelSheetTokenizer tokenizer = new ExcelSheetTokenizer();
-        tokenizer.setLinesToSkip(sheetLayout.getLinesToSkip());
-        tokenizer.setNames(recordLayout.getColumns());
+        ExcelRowMapper rowMapper = new ExcelRowMapper();
+        rowMapper.setFieldSetMapper(fieldSetMapper);
+        rowMapper.setRowTokenizer(tokenizer);
 
         ExcelItemReader itemReader = new ExcelItemReader();
-        itemReader.setSheetTokenizer(tokenizer);
-        itemReader.setFieldSetMapper(fieldSetMapper);
+        itemReader.setLinesToSkip(this.linesToSkip);
+        itemReader.setSheetsToRead(this.sheetsToRead);
+        itemReader.setRowMapper(rowMapper);
 
         return itemReader;
+    }
+
+    private String[] getColumns(){
+        return this.columns.toArray(new String[this.columns.size()]);
     }
 
 }

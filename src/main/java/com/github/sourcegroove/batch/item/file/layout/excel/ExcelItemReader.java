@@ -2,13 +2,11 @@ package com.github.sourcegroove.batch.item.file.layout.excel;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
-import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.Styles;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
-import org.springframework.batch.item.file.mapping.FieldSetMapper;
-import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.batch.item.support.AbstractItemCountingItemStreamItemReader;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
@@ -17,101 +15,114 @@ import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PushbackInputStream;
 import java.util.Iterator;
+import java.util.Set;
 
 public class ExcelItemReader<T> extends AbstractItemCountingItemStreamItemReader<T> implements ResourceAwareItemReaderItemStream<T>, InitializingBean {
-
     protected final Log log = LogFactory.getLog(getClass());
+
     private Resource resource;
-    private FieldSetMapper<T> fieldSetMapper;
-    private ExcelSheetTokenizer sheetTokenizer;
-    private XSSFReader.SheetIterator sheetIterator;
-    private Iterator<FieldSet> rowIterator;
-    private ReadOnlySharedStringsTable strings;
-    private Styles styles;
+    private ExcelRowMapper<T> rowMapper;
+    private int linesToSkip = 0;
+    private Set<Integer> sheetsToRead;
+
+    private Workbook workbook;
+    private InputStream workbookStream;
+    private Sheet sheet;
+    private Iterator<Row> rowIterator;
+    private int sheetIndex = -1;
 
     public ExcelItemReader() {
+        super();
         this.setName(ClassUtils.getShortName(this.getClass()));
     }
-    public void setSheetTokenizer(ExcelSheetTokenizer sheetTokenizer){
-        this.sheetTokenizer = sheetTokenizer ;
+
+    @Override
+    protected T doRead() throws Exception {
+        if(this.rowIterator != null && this.rowIterator.hasNext()){
+            return readNextRow();
+        } else {
+            return readNextSheet();
+        }
     }
-    public void setFieldSetMapper(FieldSetMapper<T> fieldSetMapper){
-        this.fieldSetMapper = fieldSetMapper;
+
+    @Override
+    protected void doOpen() throws Exception {
+        Assert.isTrue(this.resource.exists(), "resource does not exist");
+        Assert.isTrue(this.resource.isReadable(), "resource is not readable");
+
+        try {
+            this.workbookStream = this.resource.getInputStream();
+            if (!this.workbookStream.markSupported() && !(this.workbookStream instanceof PushbackInputStream)) {
+                throw new IllegalStateException("InputStream MUST either support mark/reset, or be wrapped as a PushbackInputStream");
+            }
+            this.workbook = WorkbookFactory.create(this.workbookStream);
+            this.workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+        } catch (IOException e) {
+            throw new RuntimeException("Error opening workbook", e);
+        }
     }
+
+    @Override
+    protected void doClose() throws Exception {
+        this.workbook.close();
+        if (workbookStream != null) {
+            workbookStream.close();
+        }
+        this.workbook = null;
+        this.workbookStream = null;
+    }
+
     @Override
     public void setResource(Resource resource) {
         this.resource = resource;
     }
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(this.resource, "'resource' is required");
-        Assert.notNull(this.sheetTokenizer, "'sheetProcessor' is required");
-        Assert.notNull(this.fieldSetMapper, "'fieldSetMapper' is required");
+        Assert.notNull(this.resource, "'resource' not set");
+        Assert.notNull(this.rowMapper, "'rowMapper' not set");
+    }
+    public void setLinesToSkip(int linesToSkip){
+        this.linesToSkip = linesToSkip;
+    }
+    public void setSheetsToRead(Set<Integer> sheetsToRead){
+        this.sheetsToRead = sheetsToRead;
+    }
+    public void setRowMapper(ExcelRowMapper<T> rowMapper){
+        this.rowMapper = rowMapper;
     }
 
-    @Override
-    protected T doRead() throws Exception {
 
-        if(this.rowIterator.hasNext()){
-            return this.fieldSetMapper.mapFieldSet(this.rowIterator.next());
+    private T readNextRow() throws Exception {
+        Row row = this.rowIterator.next();
+        if(row.getRowNum() < this.linesToSkip){
+            return doRead();
+        } else {
+            return this.rowMapper.mapRow(row);
+        }
+    }
 
-        } else if (this.sheetIterator.hasNext()){
-            this.processNextSheet();
-            return this.doRead();
+    private T readNextSheet() throws Exception {
+        this.sheetIndex++;
+        boolean shouldRead = this.sheetsToRead == null || this.sheetsToRead.contains(this.sheetIndex);
+        boolean canRead = this.sheetIndex < this.workbook.getNumberOfSheets();
+        if(shouldRead && canRead){
+            this.sheet = this.workbook.getSheetAt(this.sheetIndex);
+            this.rowIterator = this.sheet.rowIterator();
+            log.debug("Processing sheet " + this.sheet.getSheetName() + " at index " + this.sheetIndex);
+            return doRead();
+
+        } else if(canRead){
+            log.debug("Skipping sheet at index " + this.sheetIndex);
+            return readNextSheet();
 
         } else {
-            log.debug("Nothing left to read... done");
+            log.debug("No more sheets to process");
             return null;
+
         }
     }
-
-    @Override
-    protected void doOpen() throws Exception {
-        Assert.notNull(this.resource, "'resource' is required");
-        if (!this.resource.exists()) {
-            log.warn("Input resource does not exist '" + this.resource.getDescription() + "'.");
-            return;
-        }
-        if (!this.resource.isReadable()) {
-            log.warn("Input resource is not readable '" + this.resource.getDescription() + "'.");
-            return;
-        }
-        this.openWorkbook();
-        this.processNextSheet();
-    }
-
-    @Override
-    protected void doClose() throws Exception { }
-
-
-    private void openWorkbook() {
-        OPCPackage pkg = null;
-        try {
-            pkg = OPCPackage.open(this.resource.getInputStream());
-            XSSFReader xssfReader = new XSSFReader(pkg);
-            this.strings = new ReadOnlySharedStringsTable(pkg);
-            this.styles = xssfReader.getStylesTable();
-            this.sheetIterator = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
-        } catch (Throwable e) {
-            throw new RuntimeException("Error opening workbook", e);
-        }
-    }
-
-    private void processNextSheet(){
-        if(!sheetIterator.hasNext()){
-            log.info("No more worksheets");
-            return;
-        }
-
-        try (InputStream stream = this.sheetIterator.next()) {
-            log.info("Processing sheet " + this.sheetIterator.getSheetName());
-            this.rowIterator = this.sheetTokenizer.tokenize(stream, this.styles, this.strings);
-        } catch (IOException e) {
-            throw new RuntimeException("Error reading sheet", e);
-        }
-    }
-
-
 
 }
+
