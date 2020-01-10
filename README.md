@@ -55,11 +55,8 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("dateOfBirth", 31, 38)
     .build();
 
-FileLayoutItemReader<MockUserRecord> reader = new FileLayoutItemReader<>();
-reader.setFileLayout(layout);
-
-FileLayoutItemWriter<MockUserRecord> writer = new FileLayoutItemWriter<>();
-writer.setFileLayout(layout);
+ItemReader<MockUserRecord> reader = layout.getItemReader();
+ItemWriter<MockUserRecord> writer = layout.getItemWriter();
 ```
 
 # File Layouts
@@ -78,7 +75,11 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("lastName", 21, 30)
         .column("dateOfBirth", 31, 38)
     .build();
+
+ItemReader<MockUserRecord> reader = layout.getItemReader();
+ItemWriter<MockUserRecord> writer = layout.getItemWriter();
 ```
+
 ## Fixed width file layout with custom property editors and multiple record types
 ```java
 FileLayout layout = new FixedWidthFileLayout()
@@ -91,13 +92,15 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("firstName", 11, 20)
         .column("lastName", 21, 30)
         .column("dateOfBirth", 31, 38)
-    .and()
     .record(MockRoleRecord.class)
         .prefix("ROLE*")
         .column("recordType", 1, 4)
         .column("roleKey", 5, 8)
         .column("role", 9, 20)
     .build();
+
+ItemReader reader = layout.getItemReader();
+ItemWriter writer = layout.getItemWriter();
 ```
 
 ## Delimited file layouts
@@ -112,9 +115,6 @@ FileLayout layout = new DelimitedFileLayout()
             .column("dateOfBirth")
         .build();
 
-FileLayoutItemReader<MockUserRecord> reader = new FileLayoutItemReader<>();
-reader.setFileLayout(layout);
-
-FileLayoutItemWriter<MockUserRecord> writer = new FileLayoutItemWriter<>();
-writer.setFileLayout(layout);
+ItemReader<MockUserRecord> reader = layout.getItemReader();
+ItemWriter<MockUserRecord> writer = layout.getItemWriter();
 ```

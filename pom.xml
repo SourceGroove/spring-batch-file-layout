@@ -32,13 +32,13 @@
 
 
     <properties>
-        <!--<java.version>1.8</java.version>-->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <spring.batch.version>4.2.1.RELEASE</spring.batch.version>
+        <apache.poi.version>4.1.1</apache.poi.version>
     </properties>
 
-
     <dependencies>
+        <!-- misc -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -55,16 +55,23 @@
             <version>2.6</version>
         </dependency>
 
+        <!-- POI -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache.poi.version}</version>
+        </dependency>
+
         <!-- spring -->
         <dependency>
             <groupId>org.springframework.batch</groupId>
             <artifactId>spring-batch-core</artifactId>
             <version>${spring.batch.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.batch</groupId>
-            <artifactId>spring-batch-excel</artifactId>
-            <version>0.5.0-SNAPSHOT</version>
         </dependency>
 
         <!-- test -->
