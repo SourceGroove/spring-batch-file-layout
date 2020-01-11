@@ -1,7 +1,8 @@
 package com.github.sourcegroove.batch.item.file.layout.excel;
 
-import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
+import com.github.sourcegroove.batch.item.file.mock.MockAttestationRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import org.junit.Test;
@@ -10,11 +11,39 @@ import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 
 import java.time.LocalDate;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class ExcelFileLayoutTest {
 
     private static final String SAMPLE_FILE = "sample-file.xlsx";
+
+    @Test
+    public void givenRealFileWhenReadThenRead() throws Exception {
+        FileLayout layout = new ExcelFileLayout()
+                .linesToSkip(1)
+                .sheet(MockAttestationRecord.class)
+                .column("reportMonth")
+                .column("contractNumber")
+                .column("hicn")
+                .column("memberName")
+                .column("discrepancyType")
+                .column("workStatus")
+                .column("assignedOn")
+                .column("assignedTo")
+                .column("helperColumn")
+                .column("discrepancyAge")
+                .layout();
+
+        ResourceAwareItemReaderItemStream<MockUserRecord> reader = layout.getItemReader();
+        reader.setResource(MockFactory.getResource("full.xlsx"));
+        reader.open(new ExecutionContext());
+        int records = 100;// 305296;
+        for(int i = 0; i < records; i++) {
+            assertNotNull(reader.read());
+        }
+
+    }
 
     @Test
     public void givenFileWhenReadFirstSheetThenRead() throws Exception {

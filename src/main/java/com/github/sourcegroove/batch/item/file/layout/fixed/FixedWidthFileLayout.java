@@ -2,7 +2,7 @@ package com.github.sourcegroove.batch.item.file.layout.fixed;
 
 import com.github.sourcegroove.batch.item.file.writer.CompositeFlatFileItemWriter;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.decorator.PropertyEditorFieldExtractorDecorator;
+import com.github.sourcegroove.batch.item.file.writer.PropertyEditorFieldExtractorDecorator;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;

@@ -1,9 +1,13 @@
 package com.github.sourcegroove.batch.item.file.layout.fixed;
 
+import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateTimeEditor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +25,8 @@ public class FixedWidthRecordLayout  {
     public FixedWidthRecordLayout(Class targetType, FixedWidthFileLayout fileLayout){
         this.targetType = targetType;
         this.fileLayout = fileLayout;
+        this.editor(LocalDate.class, new LocalDateEditor());
+        this.editor(LocalDateTime.class, new LocalDateTimeEditor());
     }
     public Class getTargetType(){
         return this.targetType;

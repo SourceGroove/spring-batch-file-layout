@@ -1,11 +1,9 @@
 package com.github.sourcegroove.batch.item.file.writer;
 
-import com.github.sourcegroove.batch.item.file.decorator.PropertyEditorFieldExtractorDecorator;
 import com.github.sourcegroove.batch.item.file.layout.fixed.StringFormatBuilder;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
-import com.github.sourcegroove.batch.item.file.writer.CompositeFlatFileItemWriter;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;

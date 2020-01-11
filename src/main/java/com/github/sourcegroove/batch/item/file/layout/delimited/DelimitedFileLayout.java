@@ -1,9 +1,9 @@
 package com.github.sourcegroove.batch.item.file.layout.delimited;
 
-import com.github.sourcegroove.batch.item.file.decorator.PropertyEditorFieldExtractorDecorator;
+import com.github.sourcegroove.batch.item.file.writer.PropertyEditorFieldExtractorDecorator;
+import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.layout.fixed.FixedWidthRecordLayout;
-import com.github.sourcegroove.batch.item.file.writer.CompositeFlatFileItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -11,9 +11,10 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.batch.item.file.transform.LineAggregator;
 
 import java.beans.PropertyEditor;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,11 @@ public class DelimitedFileLayout implements FileLayout {
     private Class targetType;
     private List<String> columns = new ArrayList<>();
     private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+
+    public DelimitedFileLayout(){
+        this.editor(LocalDate.class, new LocalDateEditor());
+        this.editor(LocalDateTime.class, new LocalDateTimeEditor());
+    }
 
     public DelimitedFileLayout linesToSkip(int linesToSkip) {
         this.linesToSkip = linesToSkip;
