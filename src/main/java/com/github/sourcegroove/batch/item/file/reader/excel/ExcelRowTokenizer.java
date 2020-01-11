@@ -28,18 +28,27 @@ public class ExcelRowTokenizer {
         this.names = names;
     }
 
+    public FieldSet tokenize(List<Object> row){
+        List<String> v = new ArrayList<>();
+        for(Object cell : row){
+            v.add(getValue(cell));
+        }
+        return getFieldSet(v);
+    }
     public FieldSet tokenize(Row row){
         List<String> v = new ArrayList<>();
-
         Iterator<Cell> cellIterator = row.cellIterator();
         while(cellIterator.hasNext()){
             Cell cell = cellIterator.next();
             v.add(getValue(cell));
         }
+        return getFieldSet(v);
+    }
 
+    private FieldSet getFieldSet(List<String> v){
         String[] values = v.toArray(new String[v.size()]);
-        if(values != null && names != null && names.length != values.length){
-            throw new RuntimeException("Error tokenizing row " + row.getRowNum()
+        if(values != null && names != null && names.length > values.length){
+            throw new RuntimeException("Error tokenizing row: "
                     + " name count " + names.length
                     + " and field value count " + values.length
                     + "  don't match ");
@@ -49,7 +58,9 @@ public class ExcelRowTokenizer {
             return this.fieldSetFactory.create(values, names);
         }
     }
-
+    public String getValue(Object cell){
+        return cell.toString();
+    }
     public String getValue(Cell cell){
         String value = "";
         if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {

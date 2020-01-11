@@ -1,5 +1,7 @@
-package com.github.sourcegroove.batch.item.file.reader.excel;
+package com.github.sourcegroove.batch.item.file.reader.excel.simple;
 
+import com.github.sourcegroove.batch.item.file.reader.excel.ExcelItemReader;
+import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ss.usermodel.Row;
@@ -30,6 +32,7 @@ public class SimpleExceltemReader<T> extends AbstractItemCountingItemStreamItemR
     private Sheet sheet;
     private Iterator<Row> rowIterator;
     private int sheetIndex = -1;
+    private int rowNumber = -1;
 
     public SimpleExceltemReader() {
         super();
@@ -91,18 +94,18 @@ public class SimpleExceltemReader<T> extends AbstractItemCountingItemStreamItemR
         this.rowMapper = rowMapper;
     }
 
-
     private T readNextRow() throws Exception {
+        rowNumber++;
         Row row = this.rowIterator.next();
-        if(row.getRowNum() < this.linesToSkip){
+        if(rowNumber <= this.linesToSkip){
             return doRead();
         } else {
-            return this.rowMapper.mapRow(row);
+            return this.rowMapper.mapRow(row, rowNumber);
         }
     }
-
     private T readNextSheet() throws Exception {
         this.sheetIndex++;
+        rowNumber = 0;
         boolean shouldRead = this.sheetsToRead == null || this.sheetsToRead.contains(this.sheetIndex);
         boolean canRead = this.sheetIndex < this.workbook.getNumberOfSheets();
         if(shouldRead && canRead){

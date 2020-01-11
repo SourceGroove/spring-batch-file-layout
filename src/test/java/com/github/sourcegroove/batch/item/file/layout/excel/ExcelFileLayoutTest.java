@@ -1,8 +1,7 @@
 package com.github.sourcegroove.batch.item.file.layout.excel;
 
-import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.mock.MockAttestationRecord;
+import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import org.junit.Test;
@@ -11,11 +10,9 @@ import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class ExcelFileLayoutTest {
-
     private static final String SAMPLE_FILE = "sample-file.xlsx";
 
     @Test

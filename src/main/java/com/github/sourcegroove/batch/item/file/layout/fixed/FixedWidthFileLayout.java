@@ -1,8 +1,8 @@
 package com.github.sourcegroove.batch.item.file.layout.fixed;
 
-import com.github.sourcegroove.batch.item.file.writer.CompositeFlatFileItemWriter;
+import com.github.sourcegroove.batch.item.file.writer.composite.CompositeFlatFileItemWriter;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.writer.PropertyEditorFieldExtractorDecorator;
+import com.github.sourcegroove.batch.item.file.writer.composite.CompositeFlatFileFieldExtractor;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -32,7 +32,7 @@ public class FixedWidthFileLayout implements FileLayout {
             BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
             extractor.setNames(recordLayout.getColumns());
 
-            PropertyEditorFieldExtractorDecorator fieldExtractor = new PropertyEditorFieldExtractorDecorator();
+            CompositeFlatFileFieldExtractor fieldExtractor = new CompositeFlatFileFieldExtractor();
             fieldExtractor.setFieldExtractor(extractor);
             fieldExtractor.setCustomEditors(recordLayout.getEditors());
 

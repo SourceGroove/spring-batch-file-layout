@@ -7,6 +7,8 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
+import java.util.List;
+
 public class ExcelRowMapper<T> {
     protected final Log log = LogFactory.getLog(getClass());
 
@@ -20,7 +22,15 @@ public class ExcelRowMapper<T> {
         this.fieldSetMapper = fieldSetMapper;
     }
 
-    public T mapRow(Row row)  {
+    public T mapRow(List<Object> row, int rowIndex)  {
+        FieldSet fieldSet = this.rowTokenizer.tokenize(row);
+        try {
+            return this.fieldSetMapper.mapFieldSet(fieldSet);
+        } catch (BindException e) {
+            throw new RuntimeException("Error mapping fieldset", e);
+        }
+    }
+    public T mapRow(Row row, int rowIndex)  {
         FieldSet fieldSet = this.rowTokenizer.tokenize(row);
         try {
             return this.fieldSetMapper.mapFieldSet(fieldSet);

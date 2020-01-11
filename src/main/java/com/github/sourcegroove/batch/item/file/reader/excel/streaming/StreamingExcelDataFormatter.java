@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.reader.excel;
+package com.github.sourcegroove.batch.item.file.reader.excel.streaming;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.writer;
+package com.github.sourcegroove.batch.item.file.writer.composite;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -11,8 +11,8 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class PropertyEditorFieldExtractorDecorator<T> implements FieldExtractor<T>, InitializingBean {
-    protected static final Log log = LogFactory.getLog(PropertyEditorFieldExtractorDecorator.class);
+public class CompositeFlatFileFieldExtractor<T> implements FieldExtractor<T>, InitializingBean {
+    protected static final Log log = LogFactory.getLog(CompositeFlatFileFieldExtractor.class);
     private FieldExtractor<T> fieldExtractor;
     private Map<Class<?>, PropertyEditor> customEditors;
 

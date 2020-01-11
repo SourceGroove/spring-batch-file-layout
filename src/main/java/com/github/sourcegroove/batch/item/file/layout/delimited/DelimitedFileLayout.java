@@ -1,6 +1,6 @@
 package com.github.sourcegroove.batch.item.file.layout.delimited;
 
-import com.github.sourcegroove.batch.item.file.writer.PropertyEditorFieldExtractorDecorator;
+import com.github.sourcegroove.batch.item.file.writer.composite.CompositeFlatFileFieldExtractor;
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
@@ -90,7 +90,7 @@ public class DelimitedFileLayout implements FileLayout {
         BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
         extractor.setNames(getColumns());
 
-        PropertyEditorFieldExtractorDecorator fieldExtractor = new PropertyEditorFieldExtractorDecorator();
+        CompositeFlatFileFieldExtractor fieldExtractor = new CompositeFlatFileFieldExtractor();
         fieldExtractor.setFieldExtractor(extractor);
         fieldExtractor.setCustomEditors(this.editors);
 

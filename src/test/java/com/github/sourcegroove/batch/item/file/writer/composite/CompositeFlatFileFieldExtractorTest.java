@@ -1,9 +1,9 @@
-package com.github.sourcegroove.batch.item.file.writer;
+package com.github.sourcegroove.batch.item.file.writer.composite;
 
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
-import com.github.sourcegroove.batch.item.file.writer.PropertyEditorFieldExtractorDecorator;
+import com.github.sourcegroove.batch.item.file.writer.composite.CompositeFlatFileFieldExtractor;
 import org.junit.Test;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 
@@ -15,7 +15,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class PropertyEditorFieldExtractorDecoratorTest {
+public class CompositeFlatFileFieldExtractorTest {
 
     @Test
     public void givenFieldSetWithCustomEditorsWhenAggregateThenLine() throws Exception {
@@ -27,7 +27,7 @@ public class PropertyEditorFieldExtractorDecoratorTest {
         Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
         customEditors.put(LocalDate.class, new LocalDateEditor(dateFormat));
 
-        PropertyEditorFieldExtractorDecorator decorator = new PropertyEditorFieldExtractorDecorator();
+        CompositeFlatFileFieldExtractor decorator = new CompositeFlatFileFieldExtractor();
         decorator.setFieldExtractor(extractor);
         decorator.setCustomEditors(customEditors);
         decorator.afterPropertiesSet();

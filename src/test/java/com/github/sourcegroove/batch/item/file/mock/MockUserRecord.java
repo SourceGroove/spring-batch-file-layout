@@ -8,6 +8,7 @@ public class MockUserRecord {
     private String lastName;
     private String firstName;
     private LocalDate dateOfBirth;
+    private Integer age;
 
     public String getRecordType() {
         return recordType;

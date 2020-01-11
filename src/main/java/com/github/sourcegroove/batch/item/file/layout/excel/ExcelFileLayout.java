@@ -6,7 +6,7 @@ import com.github.sourcegroove.batch.item.file.layout.FileLayout;
 import com.github.sourcegroove.batch.item.file.reader.excel.ExcelItemReader;
 import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowMapper;
 import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowTokenizer;
-import com.github.sourcegroove.batch.item.file.reader.excel.SimpleExceltemReader;
+import com.github.sourcegroove.batch.item.file.reader.excel.simple.SimpleExceltemReader;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;

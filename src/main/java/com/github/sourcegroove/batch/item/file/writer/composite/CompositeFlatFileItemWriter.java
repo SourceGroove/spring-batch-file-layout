@@ -1,4 +1,4 @@
-package com.github.sourcegroove.batch.item.file.writer;
+package com.github.sourcegroove.batch.item.file.writer.composite;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

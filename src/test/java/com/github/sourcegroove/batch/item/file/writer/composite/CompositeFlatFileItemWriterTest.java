@@ -1,9 +1,11 @@
-package com.github.sourcegroove.batch.item.file.writer;
+package com.github.sourcegroove.batch.item.file.writer.composite;
 
 import com.github.sourcegroove.batch.item.file.layout.fixed.StringFormatBuilder;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
+import com.github.sourcegroove.batch.item.file.writer.composite.CompositeFlatFileFieldExtractor;
+import com.github.sourcegroove.batch.item.file.writer.composite.CompositeFlatFileItemWriter;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
@@ -47,7 +49,7 @@ public class CompositeFlatFileItemWriterTest {
     private static LineAggregator getLineAggregator(List<String> fieldNames, String format){
         BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
         extractor.setNames(fieldNames.toArray(new String[fieldNames.size()]));
-        PropertyEditorFieldExtractorDecorator fieldExtractor = new PropertyEditorFieldExtractorDecorator();
+        CompositeFlatFileFieldExtractor fieldExtractor = new CompositeFlatFileFieldExtractor();
         fieldExtractor.setFieldExtractor(extractor);
         FormatterLineAggregator aggregator = new FormatterLineAggregator();
         aggregator.setFieldExtractor(fieldExtractor);
