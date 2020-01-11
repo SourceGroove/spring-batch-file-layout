@@ -19,33 +19,6 @@ public class ExcelFileLayoutTest {
     private static final String SAMPLE_FILE = "sample-file.xlsx";
 
     @Test
-    public void givenRealFileWhenReadThenRead() throws Exception {
-        FileLayout layout = new ExcelFileLayout()
-                .linesToSkip(1)
-                .sheet(MockAttestationRecord.class)
-                .column("reportMonth")
-                .column("contractNumber")
-                .column("hicn")
-                .column("memberName")
-                .column("discrepancyType")
-                .column("workStatus")
-                .column("assignedOn")
-                .column("assignedTo")
-                .column("helperColumn")
-                .column("discrepancyAge")
-                .layout();
-
-        ResourceAwareItemReaderItemStream<MockUserRecord> reader = layout.getItemReader();
-        reader.setResource(MockFactory.getResource("full.xlsx"));
-        reader.open(new ExecutionContext());
-        int records = 100;// 305296;
-        for(int i = 0; i < records; i++) {
-            assertNotNull(reader.read());
-        }
-
-    }
-
-    @Test
     public void givenFileWhenReadFirstSheetThenRead() throws Exception {
         FileLayout layout = new ExcelFileLayout()
                 .sheetIndex(0)
