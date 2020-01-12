@@ -5,6 +5,10 @@ import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Set;
 
+/**
+ * Note that dates will be serialized as ISO dates, so you're date editors will need to use that format.
+ * @param <T>
+ */
 public interface ExcelItemReader<T> extends ResourceAwareItemReaderItemStream<T>, InitializingBean {
     void setLinesToSkip(int linesToSkip);
     void setSheetsToRead(Set<Integer> sheetsToRead);
