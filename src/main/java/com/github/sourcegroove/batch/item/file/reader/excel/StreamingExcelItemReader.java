@@ -1,13 +1,13 @@
 package com.github.sourcegroove.batch.item.file.reader.excel;
 
-import com.github.sourcegroove.batch.item.file.reader.excel.ExcelItemReader;
-import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowMapper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -53,6 +53,7 @@ public class StreamingExcelItemReader<T>  extends AbstractItemCountingItemStream
     protected T doRead() throws Exception {
         if (this.rowIterator != null && this.rowIterator.hasNext()) {
             rowNumber++;
+            log.debug("Processing row " + rowNumber);
             List<String> row = this.rowIterator.next();
             return this.rowNumber <= this.linesToSkip ? doRead() : this.rowMapper.mapRow(row, rowNumber);
         } else {
@@ -139,6 +140,8 @@ public class StreamingExcelItemReader<T>  extends AbstractItemCountingItemStream
     public class StreamingSheetContentsHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
         private Map<Integer, List<String>> rows = new HashMap<>();
         private int currentRow = 0;
+        private int currentColumn = 0;
+
         public Iterator<List<String>> getRowIterator(){
             return this.rows.values().iterator();
         }
@@ -147,7 +150,9 @@ public class StreamingExcelItemReader<T>  extends AbstractItemCountingItemStream
             this.currentRow = rowNum;
         }
         @Override
-        public void endRow(int rowNum) {}
+        public void endRow(int rowNum) {
+            this.currentColumn = 0;
+        }
 
         @Override
         public void cell(String cellReference, String formattedValue, XSSFComment comment) {
@@ -155,6 +160,15 @@ public class StreamingExcelItemReader<T>  extends AbstractItemCountingItemStream
             if(columns == null){
                 columns = new ArrayList<>();
             }
+            if(cellReference == null) {
+                cellReference = new CellAddress(currentRow, currentColumn).formatAsString();
+            }
+            int thisCol = (new CellReference(cellReference)).getCol();
+            int missingColumns = thisCol - currentColumn - 1;
+            for (int i = 0; i< missingColumns; i++) {
+                columns.add("");
+            }
+            currentColumn = thisCol;
             columns.add(formattedValue);
             this.rows.put(currentRow, columns);
         }

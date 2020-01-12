@@ -126,20 +126,11 @@ public class SimpleExcelItemReader<T> extends AbstractItemCountingItemStreamItem
             return null;
         }
     }
-    private String format(Object object){
-        if(object instanceof Date){
-            Date date = (Date)object;
-            LocalDateTime dt = new Timestamp(date.getTime()).toLocalDateTime();
-            return DateTimeFormatter.BASIC_ISO_DATE.format(dt);
-        }
-        return object.toString();
-    }
 
     private List<String> getValues(Row row){
         List<Object> values = new ArrayList<>();
-        Iterator<Cell> cellIterator = row.cellIterator();
-        while(cellIterator.hasNext()){
-            Cell cell = cellIterator.next();
+        for(int i = 0; i < row.getLastCellNum(); i++){
+            Cell cell = row.getCell(i);
             values.add(getValue(cell));
         }
         return values.stream()
@@ -153,8 +144,10 @@ public class SimpleExcelItemReader<T> extends AbstractItemCountingItemStreamItem
             return cell.getNumericCellValue();
         } else if (cell.getCellType() == CellType.BOOLEAN){
             return cell.getBooleanCellValue();
-        } else if (cell.getCellType() == CellType.FORMULA){
+        } else if (cell.getCellType() == CellType.FORMULA) {
             return getFormulaValue(cell);
+        } else if(cell.getCellType() == CellType.BLANK){
+            return "";
         } else {
             return cell.getStringCellValue();
         }
@@ -169,6 +162,13 @@ public class SimpleExcelItemReader<T> extends AbstractItemCountingItemStreamItem
             return v.getStringValue();
         }
     }
-
+    private String format(Object object){
+        if(object instanceof Date){
+            Date date = (Date)object;
+            LocalDateTime dt = new Timestamp(date.getTime()).toLocalDateTime();
+            return DateTimeFormatter.BASIC_ISO_DATE.format(dt);
+        }
+        return object.toString();
+    }
 }
 

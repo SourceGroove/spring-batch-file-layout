@@ -21,12 +21,13 @@ public class ExcelRowMapper<T> {
         this.fieldSetMapper = fieldSetMapper;
     }
 
-    public T mapRow(List<String> row, int rowIndex)  {
-        FieldSet fieldSet = this.rowTokenizer.tokenize(row);
+    public T mapRow(List<String> row, int rowNumber)  {
+        log.trace("Mapping row " + rowNumber + " with " + row.size() + " values");
+        FieldSet fieldSet = this.rowTokenizer.tokenize(row, rowNumber);
         try {
             return this.fieldSetMapper.mapFieldSet(fieldSet);
         } catch (BindException e) {
-            throw new RuntimeException("Error mapping fieldset at row " + rowIndex, e);
+            throw new RuntimeException("Error mapping fieldset at row " + rowNumber, e);
         }
     }
 

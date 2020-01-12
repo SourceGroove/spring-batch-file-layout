@@ -19,11 +19,11 @@ public class ExcelRowTokenizer {
         this.names = names;
     }
 
-    public FieldSet tokenize(List<String> row){
+    public FieldSet tokenize(List<String> row, int rowNumber){
         List<String> columns = row.stream().collect(Collectors.toList());
         String[] values = columns.toArray(new String[columns.size()]);
         if(values != null && names != null && names.length > values.length){
-            throw new RuntimeException("Error tokenizing row: "
+            throw new RuntimeException("Error tokenizing row: " + rowNumber
                     + " name count " + names.length
                     + " and field value count " + values.length
                     + "  don't match ");
@@ -34,4 +34,13 @@ public class ExcelRowTokenizer {
         }
     }
 
+
+    private void logFields(List<String> values, String[] names){
+        for(String name : names){
+            log.info("Name: " + name);
+        }
+        for(String value : values){
+            log.info("Value: " + value);
+        }
+    }
 }
