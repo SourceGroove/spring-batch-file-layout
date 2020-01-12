@@ -3,10 +3,7 @@ package com.github.sourcegroove.batch.item.file.layout.excel;
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.layout.FileLayout;
-import com.github.sourcegroove.batch.item.file.reader.excel.ExcelItemReader;
-import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowMapper;
-import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowTokenizer;
-import com.github.sourcegroove.batch.item.file.reader.excel.simple.SimpleExceltemReader;
+import com.github.sourcegroove.batch.item.file.reader.excel.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
@@ -20,11 +17,11 @@ import java.util.*;
 public class ExcelFileLayout implements FileLayout {
     protected static final Log log = LogFactory.getLog(ExcelFileLayout.class);
 
-
     private Class targetType;
     private List<String> columns = new ArrayList<>();
     private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
     private Set<Integer> sheetsToRead;
+    private boolean streamFile = true;
     private int linesToSkip = 0;
 
     public ExcelFileLayout(){
@@ -57,6 +54,10 @@ public class ExcelFileLayout implements FileLayout {
         this.editors.put(clazz, editor);
         return this;
     }
+    public ExcelFileLayout streamFile(boolean streamFile){
+        this.streamFile = streamFile;
+        return this;
+    }
     public ExcelFileLayout layout(){
         return this;
     }
@@ -79,7 +80,7 @@ public class ExcelFileLayout implements FileLayout {
         rowMapper.setFieldSetMapper(fieldSetMapper);
         rowMapper.setRowTokenizer(tokenizer);
 
-        SimpleExceltemReader itemReader = new SimpleExceltemReader();
+        ExcelItemReader itemReader = this.streamFile ? new StreamingExcelItemReader() : new SimpleExcelItemReader();
         itemReader.setLinesToSkip(this.linesToSkip);
         itemReader.setSheetsToRead(this.sheetsToRead);
         itemReader.setRowMapper(rowMapper);

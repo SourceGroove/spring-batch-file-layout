@@ -1,52 +1,27 @@
 package com.github.sourcegroove.batch.item.file.reader.excel;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.DefaultFieldSetFactory;
-import org.springframework.batch.item.file.transform.FieldExtractor;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.batch.item.file.transform.FieldSetFactory;
 
-import java.beans.PropertyEditor;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 public class ExcelRowTokenizer {
+    protected final Log log = LogFactory.getLog(getClass());
     private FieldSetFactory fieldSetFactory = new DefaultFieldSetFactory();
     private String[] names;
-    private FormulaEvaluator formulaEvaluator;
-    private DateTimeFormatter dateFormatter = DateTimeFormatter.BASIC_ISO_DATE;
 
-    public void setDateFormatter(DateTimeFormatter dateFormatter){
-        this.dateFormatter = dateFormatter;
-    }
-    public void setFormEvaluator(FormulaEvaluator formEvaluator){
-        this.formulaEvaluator = formEvaluator;
-    }
     public void setNames(String[] names) {
         this.names = names;
     }
 
-    public FieldSet tokenize(List<Object> row){
-        List<String> v = new ArrayList<>();
-        for(Object cell : row){
-            v.add(getValue(cell));
-        }
-        return getFieldSet(v);
-    }
-    public FieldSet tokenize(Row row){
-        List<String> v = new ArrayList<>();
-        Iterator<Cell> cellIterator = row.cellIterator();
-        while(cellIterator.hasNext()){
-            Cell cell = cellIterator.next();
-            v.add(getValue(cell));
-        }
-        return getFieldSet(v);
-    }
-
-    private FieldSet getFieldSet(List<String> v){
-        String[] values = v.toArray(new String[v.size()]);
+    public FieldSet tokenize(List<String> row){
+        List<String> columns = row.stream().collect(Collectors.toList());
+        String[] values = columns.toArray(new String[columns.size()]);
         if(values != null && names != null && names.length > values.length){
             throw new RuntimeException("Error tokenizing row: "
                     + " name count " + names.length
@@ -58,31 +33,5 @@ public class ExcelRowTokenizer {
             return this.fieldSetFactory.create(values, names);
         }
     }
-    public String getValue(Object cell){
-        return cell.toString();
-    }
-    public String getValue(Cell cell){
-        String value = "";
-        if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-            Date date = cell.getDateCellValue();
-            LocalDateTime ldt = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-            value = dateFormatter.format(ldt);
-
-        } else if (cell.getCellType() == CellType.NUMERIC) {
-            value = String.valueOf(cell.getNumericCellValue());
-
-        } else if (cell.getCellType() == CellType.BOOLEAN){
-            value = String.valueOf(cell.getBooleanCellValue());
-
-        } else if (cell.getCellType() == CellType.FORMULA && this.formulaEvaluator != null){
-            value = formulaEvaluator.evaluate(cell).formatAsString();
-
-        } else {
-            value = cell.getStringCellValue();
-        }
-
-        return value;
-    }
-
 
 }

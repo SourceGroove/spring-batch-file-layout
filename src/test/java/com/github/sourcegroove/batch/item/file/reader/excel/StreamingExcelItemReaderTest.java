@@ -1,12 +1,13 @@
-package com.github.sourcegroove.batch.item.file.reader.excel.streaming;
+package com.github.sourcegroove.batch.item.file.reader.excel;
 
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.layout.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
+import com.github.sourcegroove.batch.item.file.reader.excel.ExcelItemReader;
 import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowMapper;
 import com.github.sourcegroove.batch.item.file.reader.excel.ExcelRowTokenizer;
-import com.github.sourcegroove.batch.item.file.reader.excel.simple.SimpleExceltemReader;
+import com.github.sourcegroove.batch.item.file.reader.excel.StreamingExcelItemReader;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -19,20 +20,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class StreamingExcelItemReaderTest {
+public class StreamingExcelItemReaderTest extends AbstractExcelItemReaderTest {
 
-    private static final String SAMPLE_FILE = "sample-file.xlsx";
-
-    @Test
-    public void givenFileWhenReadFirstSheetThenRead() throws Exception {
-        StreamingExcelItemReader reader = getReader(SAMPLE_FILE, null);
-        reader.open(new ExecutionContext());
-        MockFactory.assertNeo((MockUserRecord) reader.read());
-        MockFactory.assertTrinity((MockUserRecord) reader.read());
-        //assertNull(reader.read());
-    }
-
-    private StreamingExcelItemReader getReader(String filename, Integer sheet){
+    public ExcelItemReader getReader(String filename, Integer sheet){
         Map<Class<?>, PropertyEditor> editors = new HashMap<>();
         editors.put(LocalDate.class, new LocalDateEditor());
         editors.put(LocalDateTime.class, new LocalDateTimeEditor());
