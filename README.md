@@ -1,5 +1,7 @@
 # Spring Batch File Layouts
 
+* Note - don't use anything prior to v 1.3.0
+ 
 ## Overview
 Spring Batch File Layouts aim to simplify the construction of File ItemReader/Writers for fixed width, delimited and Excel files.
 
@@ -42,13 +44,13 @@ a physical file at runtime.
 <dependency>
   <groupId>com.github.sourcegroove</groupId>
   <artifactId>spring-batch-file-layout</artifactId>
-  <version>1.2.0</version>
+  <version>1.3.0</version>
 </dependency>
 ```
 
 ## Gradle Dependency
 ```
-implementation 'com.github.sourcegroove:spring-batch-file-layout:1.2.0'
+implementation 'com.github.sourcegroove:spring-batch-file-layout:1.3.0'
 ```
 # Declarative file layouts are used to create ItemReaders and ItemWriters
 All you need to do is define your delimited, fixed width or excel file layout and ask it for an item reader or wrier.  By default, the
