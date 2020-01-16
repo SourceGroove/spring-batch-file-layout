@@ -1,7 +1,7 @@
 # Spring Batch File Layouts
 
 ## Overview
-Spring Batch File Layouts aim to simplify the construction of FlatFileItemReader/Writers for fixed width & delimited flat files.
+Spring Batch File Layouts aim to simplify the construction of File ItemReader/Writers for fixed width, delimited and Excel files.
 
 This library sits on top of existing SpringBatch components and allows the developer to focus on defining a single file 
 layout that can be used to both read and write flat files in a simplified manner. 
@@ -21,8 +21,20 @@ different file specifications that:
 Using this library, we were able to create two simple SpringBatch jobs - one for import and one for export - we just supply the layout and 
 a physical file at runtime.   
 
-Related: https://github.com/spring-projects/spring-batch-extensions
 
+# Key Classes
+* **FixedWidthFileLayout** - used to construct a fixed width file layout that can return configured FileLayoutItemReader/Writers 
+
+* **DelimitedFileLayout** - used to construct a delimited file layout that can return configured FileLayoutItemReader/Writers 
+
+* **ExcelFileLayout** - used to construct an Excel file layout that can return configured FileLayoutItemReader/Writers
+
+* **FileLayoutItemReader** - an interface that extends ResourceAwareItemReaderItemStream<T> and InitializingBean - used to enforce 
+                        FileLayout implementations to return appropriate reader implementations. 
+
+* **FileLayoutItemWriter** - an interface that extends ResourceAwareItemReaderWriterStream<T> and InitializingBean - used to enforce 
+                        FileLayout implementations to return appropriate writer implementations.
+ 
 # Usage
 
 ## Maven Dependency
@@ -39,8 +51,8 @@ Related: https://github.com/spring-projects/spring-batch-extensions
 implementation 'com.github.sourcegroove:spring-batch-file-layout:1.2.0'
 ```
 # Declarative file layouts are used to create ItemReaders and ItemWriters
-All you need to do is define your delimited or fixed width file layout and pass it to the FileLayoutItemReader or FileLayoutItemWriter.  By default, the
-FlatFileItemX implementations uses Spring's BeanWrapperFieldSetMapper & BeanWrapperFieldExtractor to map your POJO's properties to either column 'Ranges' 
+All you need to do is define your delimited, fixed width or excel file layout and ask it for an item reader or wrier.  By default, the
+implementations uses Spring's BeanWrapperFieldSetMapper & BeanWrapperFieldExtractor to map your POJO's properties to either column 'Ranges' 
 in a fixed width file or column order in a delimited file.  
 
 You can, of course, override this by changing the FieldSetMapper/FieldExtractor on the ItemReader/Writers if you need to.
@@ -55,17 +67,44 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("dateOfBirth", 31, 38)
     .build();
 
-ItemReader<MockUserRecord> reader = layout.getItemReader();
-ItemWriter<MockUserRecord> writer = layout.getItemWriter();
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
 ```
 
 # File Layouts
-There are two implementations of the FileLayout interface - FixedWidthFileLayout & DelimitedFileLayout.  Each of these
-contains a collection of 'record layouts' that define the records in the file.
+There are three implementations of the FileLayout interface - FixedWidthFileLayout, DelimitedFileLayout & ExcelFileLayout.  
+Each of these contains a collection of 'record (or sheet) layouts' that define the records in the file.
 
 Defining layouts in Java is simple, but they can also be dynamically defined at runtime using persisted data
 
-## Fixed width file layout simple
+## Fixed Width Layouts
+Fixed width file layouts define columns by the position they appear in the file.  If the positions defined in the
+layout leave a 'gap' in between defined columns, filler (empty spaces) will be added to the line to fill the gap.
+
+You can customize the way columns are serialized to text when being written by specifying a FixedWidthFormatBuilder.Format 
+value in your column definition. 
+
+i.e.
+```java
+    ...
+    .column("dateOfBirth", 31, 38, FixedWidthFormatBuilder.Format.YYYYMM) // will format the date to YYYYMM
+    ...
+```
+
+Current format options:
+
+Enum Value  | Example | Description
+------------- | ------------- | -------------
+STRING  | "TEXT______" | left aligned text 
+INTEGER | "0000000123" | left padded with 0's
+ZD | "123_______" | left aligned number
+DECIMAL | "000000123.5" | right aligned decimal with 2 digit decimal
+YYYYMMDD | "20190930" | date formatted to YYYYMMDD
+YYYYMM | "201909" | date formatted to YYYYMM
+YYYY | "2019" | date formatted to YYYY
+CONSTANT | "__________" | filler space (mostly used internally to fill gaps between columns
+
+### Fixed width file layout simple
 ```java
 FileLayout layout = new FixedWidthFileLayout()
     .record(MockUserRecord.class)
@@ -76,11 +115,11 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("dateOfBirth", 31, 38)
     .build();
 
-ItemReader<MockUserRecord> reader = layout.getItemReader();
-ItemWriter<MockUserRecord> writer = layout.getItemWriter();
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
 ```
 
-## Fixed width file layout with custom property editors and multiple record types
+### Fixed width file layout with custom property editors, multiple record types and custom column formats
 ```java
 FileLayout layout = new FixedWidthFileLayout()
     .linesToSkip(1)
@@ -91,7 +130,7 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("username", 5, 10)
         .column("firstName", 11, 20)
         .column("lastName", 21, 30)
-        .column("dateOfBirth", 31, 38)
+        .column("dateOfBirth", 31, 38, FixedWidthFormatBuilder.Format.YYYYMM)
     .record(MockRoleRecord.class)
         .prefix("ROLE*")
         .column("recordType", 1, 4)
@@ -99,11 +138,15 @@ FileLayout layout = new FixedWidthFileLayout()
         .column("role", 9, 20)
     .build();
 
-ItemReader reader = layout.getItemReader();
-ItemWriter writer = layout.getItemWriter();
+LayoutItemReader reader = layout.getItemReader();
+LayoutItemWriter writer = layout.getItemWriter();
 ```
 
-## Delimited file layouts
+## Delimited Layouts
+Delimited layouts need to define the columns in the order they appear in the file. 
+The delimiter and qualifier can be defined.
+
+### Delimited file layout
 ```java
 FileLayout layout = new DelimitedFileLayout()
         .linesToSkip(1)
@@ -115,6 +158,78 @@ FileLayout layout = new DelimitedFileLayout()
             .column("dateOfBirth")
         .build();
 
-ItemReader<MockUserRecord> reader = layout.getItemReader();
-ItemWriter<MockUserRecord> writer = layout.getItemWriter();
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
+```
+
+### Delimited file layout with custom qualifier and delimiter
+```java
+FileLayout layout = new DelimitedFileLayout()
+        .linesToSkip(1)
+        .qualifier('~')
+        .delimiter("|")
+        .record(MockUserRecord.class)
+            .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+            .column("username")
+            .column("firstName")
+            .column("lastName")
+            .column("dateOfBirth")
+        .build();
+
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
+```
+
+## Excel Layouts
+By default, the excel reader will read all sheets in the workbook and use the StreamingExcelItemReader implementation.  There is 
+a SimpleExcelItemReader which loads the entire workbook into memory, but I can't think of a valid reason to use this over the 
+streaming implementation at this point.
+
+### Excel file layout simple
+```java
+Layout layout = new ExcelLayout()
+                .linesToSkip(1)
+                .sheet(MockUserRecord.class)
+                .column("username")
+                .column("firstName")
+                .column("lastName")
+                .column("dateOfBirth")
+                .editor(LocalDate.class, new LocalDateEditor())
+                .layout();
+
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
+```
+### Excel file layout one sheet
+```java
+Layout layout = new ExcelLayout()
+                .linesToSkip(1)
+                .sheet(MockUserRecord.class)
+                .sheetIndex(1) // reads the second sheet in the workbook
+                .column("username")
+                .column("firstName")
+                .column("lastName")
+                .column("dateOfBirth")
+                .editor(LocalDate.class, new LocalDateEditor())
+                .layout();
+
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
+```
+
+### Excel file layout one sheet
+```java
+Layout layout = new ExcelLayout()
+                .linesToSkip(1)
+                .sheet(MockUserRecord.class)
+                .sheetIndex(1) // reads the second sheet in the workbook
+                .column("username")
+                .column("firstName")
+                .column("lastName")
+                .column("dateOfBirth")
+                .editor(LocalDate.class, new LocalDateEditor())
+                .layout();
+
+LayoutItemReader<MockUserRecord> reader = layout.getItemReader();
+LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
 ```
