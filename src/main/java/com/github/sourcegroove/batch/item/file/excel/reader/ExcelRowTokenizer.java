@@ -1,5 +1,6 @@
 package com.github.sourcegroove.batch.item.file.excel.reader;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.DefaultFieldSetFactory;
@@ -7,7 +8,6 @@ import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.batch.item.file.transform.FieldSetFactory;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class ExcelRowTokenizer {
@@ -20,8 +20,12 @@ public class ExcelRowTokenizer {
     }
 
     public FieldSet tokenize(List<String> row, int rowNumber){
-        List<String> columns = row.stream().collect(Collectors.toList());
-        String[] values = columns.toArray(new String[columns.size()]);
+        if(CollectionUtils.isNotEmpty(row) && CollectionUtils.size(row) == names.length - 1){
+            //add that last column the mapper missed.... (or we could make this 'ignore' extra columns...
+            row.add("");
+        }
+
+        String[] values = row.toArray(new String[row.size()]);
         if(values != null && names != null && names.length > values.length){
             throw new RuntimeException("Error tokenizing row: " + rowNumber
                     + " name count " + names.length
