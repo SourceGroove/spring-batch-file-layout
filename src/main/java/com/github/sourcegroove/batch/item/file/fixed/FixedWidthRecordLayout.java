@@ -59,7 +59,7 @@ public class FixedWidthRecordLayout  {
     }
     public FixedWidthRecordLayout column(String name, int width, FixedWidthFormatBuilder.Format format){
         int start = CollectionUtils.isNotEmpty(this.columnRanges) ? this.columnRanges.get(this.columnRanges.size() - 1).getMax() + 1 : 1;
-        int end = start + width;
+        int end = start + width - 1;
         return column(name, start, end, format);
     }
     public FixedWidthRecordLayout column(String name, int start, int end){

@@ -4,6 +4,8 @@ import com.github.sourcegroove.batch.item.file.Layout;
 import com.github.sourcegroove.batch.item.file.fixed.reader.FixedWidthFileItemReader;
 import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileFieldExtractor;
 import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileItemWriter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
@@ -15,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FixedWidthLayout implements Layout {
+    protected final Log log = LogFactory.getLog(getClass());
     private int linesToSkip = 0;
     private List<FixedWidthRecordLayout> records = new ArrayList<>();
 
@@ -50,6 +53,7 @@ public class FixedWidthLayout implements Layout {
         Map<String, LineTokenizer> tokenizers = new HashMap<>();
         for(FixedWidthRecordLayout recordLayout : this.records) {
             BeanWrapperFieldSetMapper fieldSetMapper = new BeanWrapperFieldSetMapper();
+            fieldSetMapper.setDistanceLimit(0);
             fieldSetMapper.setTargetType(recordLayout.getTargetType());
             fieldSetMapper.setCustomEditors(recordLayout.getEditors());
             FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
@@ -57,6 +61,16 @@ public class FixedWidthLayout implements Layout {
             tokenizer.setColumns(recordLayout.getColumnRanges());
             mappers.put(recordLayout.getPrefix(), fieldSetMapper);
             tokenizers.put(recordLayout.getPrefix(), tokenizer);
+            
+            for(int i = 0; i < recordLayout.getColumnRanges().length; i++){
+                log.info("Created reader with column: "
+                        + recordLayout.getColumns()[i]
+                        + ": " 
+                        + recordLayout.getColumnRanges()[i].getMin() 
+                        + "-" 
+                        + recordLayout.getColumnRanges()[i].getMax());
+            }
+            
         }
         PatternMatchingCompositeLineMapper lineMapper = new PatternMatchingCompositeLineMapper();
         lineMapper.setFieldSetMappers(mappers);
