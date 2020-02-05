@@ -2,10 +2,13 @@ package com.github.sourcegroove.batch.item.file.delimited;
 
 import com.github.sourcegroove.batch.item.file.delimited.reader.DelimitedFileItemReader;
 import com.github.sourcegroove.batch.item.file.delimited.writer.DelimitedFileItemWriter;
+import com.github.sourcegroove.batch.item.file.editor.DateEditor;
+import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileFieldExtractor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.Layout;
+import org.apache.poi.ss.formula.functions.Offset;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
@@ -15,10 +18,9 @@ import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import java.beans.PropertyEditor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 public class DelimitedLayout implements Layout {
     private int linesToSkip = 0;
@@ -31,6 +33,8 @@ public class DelimitedLayout implements Layout {
     public DelimitedLayout(){
         this.editor(LocalDate.class, new LocalDateEditor());
         this.editor(LocalDateTime.class, new LocalDateTimeEditor());
+        this.editor(OffsetDateTime.class, new OffsetDateTimeEditor());
+        this.editor(Date.class, new DateEditor());
     }
 
     public DelimitedLayout linesToSkip(int linesToSkip) {

@@ -1,17 +1,18 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
+import com.github.sourcegroove.batch.item.file.editor.DateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
+import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 public class FixedWidthRecordLayout  {
     private FixedWidthLayout fileLayout;
@@ -27,6 +28,8 @@ public class FixedWidthRecordLayout  {
         this.fileLayout = fileLayout;
         this.editor(LocalDate.class, new LocalDateEditor());
         this.editor(LocalDateTime.class, new LocalDateTimeEditor());
+        this.editor(OffsetDateTime.class, new OffsetDateTimeEditor());
+        this.editor(Date.class, new DateEditor());;
     }
     public Class getTargetType(){
         return this.targetType;

@@ -1,7 +1,9 @@
 package com.github.sourcegroove.batch.item.file.excel;
 
+import com.github.sourcegroove.batch.item.file.editor.DateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
+import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.excel.reader.*;
 import com.github.sourcegroove.batch.item.file.Layout;
 import com.github.sourcegroove.batch.item.file.LayoutItemWriter;
@@ -12,6 +14,8 @@ import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import java.beans.PropertyEditor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 public class ExcelLayout implements Layout {
@@ -27,6 +31,8 @@ public class ExcelLayout implements Layout {
     public ExcelLayout(){
         this.editor(LocalDate.class, new LocalDateEditor());
         this.editor(LocalDateTime.class, new LocalDateTimeEditor());
+        this.editor(OffsetDateTime.class, new OffsetDateTimeEditor());
+        this.editor(Date.class, new DateEditor());
     }
     public ExcelLayout sheet(Class targetType) {
         if(this.targetType != null){
