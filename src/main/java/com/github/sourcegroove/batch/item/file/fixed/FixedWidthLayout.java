@@ -61,8 +61,8 @@ public class FixedWidthLayout implements Layout {
      * 
      * Basically - it's safer... and therefore is the default
      * 
-     * @param writeAsStrings
-     * @return
+     * @param writeAsStrings <tt>true</tt> to write as strings
+     * @return this builder
      */
     public FixedWidthLayout writeAsStrings(boolean writeAsStrings) {
         this.writeAsStrings = writeAsStrings;
