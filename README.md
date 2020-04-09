@@ -36,23 +36,22 @@ a physical file at runtime.
 
 * **FileLayoutItemWriter** - an interface that extends ResourceAwareItemReaderWriterStream<T> and InitializingBean - used to enforce 
                         FileLayout implementations to return appropriate writer implementations.
- 
+
 # Notes
 - For fixed width files, use start/end (ranges) over width  where possible (widths are sketchy when you start incorporating filler and custom formats.. )
 - The Excel item writer isn't implemented yet
-- PropertyEditors with Format.xxx values - be careful mixing the two because you can run into issues.  Consider the below layout, and using the 
-    layout.getItemWriter().  The editor will convert the dateOfBirth to a string as 'YYYYMMDD' and then the Format.YYYYMMDD will  try and treat
-    the dateOfBirth value as a date and do 'String.print("%tY%<tm%<td",  dateOfBirthValue)'.  This will throw an exception because the dateOfBirthValue 
-    is a String not a date object.
+- Formats - Formatting is applied top down, where the most specific is used.  For example, in the following scenario, 
+    the dateOfBirth field will end up getting the YYYYMM format. 
 ```
 FileLayout layout = new FixedWidthFileLayout()
-    .record(MockUserRecord.class)
-        .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+     .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+     .record(MockUserRecord.class)
+        .editor(LocalDate.class, new LocalDateEditor("yyyy-MM-dd"))
         .column("recordType", 1, 4)
         .column("username", 5, 10)
         .column("firstName", 11, 20)
         .column("lastName", 21, 30)
-        .column("dateOfBirth", 31, 38, Format.YYYYMMDD)
+        .column("dateOfBirth", 31, 38, Format.YYYYMM)
     .build();
 ```
 Because of this, the library will allow you to add editors in different ways:

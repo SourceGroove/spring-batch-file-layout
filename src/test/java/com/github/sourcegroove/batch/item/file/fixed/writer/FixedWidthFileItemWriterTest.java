@@ -1,7 +1,5 @@
 package com.github.sourcegroove.batch.item.file.fixed.writer;
 
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileFieldExtractor;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileItemWriter;
 import com.github.sourcegroove.batch.item.file.fixed.FixedWidthFormatBuilder;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
@@ -18,6 +16,7 @@ import java.util.*;
 import static org.junit.Assert.assertTrue;
 
 public class FixedWidthFileItemWriterTest {
+
 
     @Test
     public void givenLineAggregatorWriteAndReadAlotThenPerformant() throws Exception {
@@ -44,13 +43,12 @@ public class FixedWidthFileItemWriterTest {
         watch.stop();
         assertTrue("Time=" + watch.getTime(), watch.getTime() <= 500);
     }
-
-
+    
     private static LineAggregator getLineAggregator(List<String> fieldNames, String format){
-        BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
-        extractor.setNames(fieldNames.toArray(new String[fieldNames.size()]));
-        FixedWidthFileFieldExtractor fieldExtractor = new FixedWidthFileFieldExtractor();
-        fieldExtractor.setFieldExtractor(extractor);
+
+        FixedWidthBeanWrapperFieldExtractor fieldExtractor = new FixedWidthBeanWrapperFieldExtractor();
+        fieldExtractor.setNames(fieldNames.toArray(new String[fieldNames.size()]));
+        
         FormatterLineAggregator aggregator = new FormatterLineAggregator();
         aggregator.setFieldExtractor(fieldExtractor);
         aggregator.setFormat(format);

@@ -21,13 +21,26 @@ public class FixedWidthFileItemWriter<T> extends AbstractFileItemWriter<T> imple
     protected static final Log log = LogFactory.getLog(FixedWidthFileItemWriter.class);
     private LineAggregator headerLineAggregator;
     private LineAggregator footerLineAggregator;
-    private Map<Class, LineAggregator> lineAggregators;
+    private Map<Class, LineAggregator<T>> lineAggregators;
 
     public FixedWidthFileItemWriter() {
         super();
         this.setName(ClassUtils.getShortName(this.getClass()));
     }
-
+    
+    public LineAggregator getHeaderLineAggregator(){
+        return this.headerLineAggregator;
+    }
+    public LineAggregator getFooterLineAggregator(){
+        return this.footerLineAggregator;
+    }
+    public Map<Class, LineAggregator<T>> getLineAggregators(){
+        return this.lineAggregators;
+    }
+    public LineAggregator<T> getLineAggregator(Class clazz){
+        return this.lineAggregators.get(clazz);
+    }
+    
     public void setLineAggregator(Class clazz, LineAggregator lineAggregator) {
         if (this.lineAggregators == null) {
             this.lineAggregators = new HashMap<>();
@@ -35,7 +48,7 @@ public class FixedWidthFileItemWriter<T> extends AbstractFileItemWriter<T> imple
         this.lineAggregators.put(clazz, lineAggregator);
     }
 
-    public void setLineAggregators(Map<Class, LineAggregator> lineAggregators) {
+    public void setLineAggregators(Map<Class, LineAggregator<T>> lineAggregators) {
         this.lineAggregators = lineAggregators;
     }
 
@@ -85,7 +98,7 @@ public class FixedWidthFileItemWriter<T> extends AbstractFileItemWriter<T> imple
     }
 
     private String aggregate(T item) {
-        LineAggregator aggregator = this.lineAggregators.get(item.getClass());
+        LineAggregator<T> aggregator = this.getLineAggregator(item.getClass());
         if (aggregator == null) {
             throw new IllegalArgumentException("Unsupported targetType '" + item.getClass() + "' - is it in the file layout?");
         }

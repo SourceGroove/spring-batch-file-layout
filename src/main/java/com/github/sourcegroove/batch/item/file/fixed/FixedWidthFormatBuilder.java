@@ -9,9 +9,26 @@ public class FixedWidthFormatBuilder {
 
     private static final Format DEFAULT_FORMAT = Format.STRING;
     private final Log log = LogFactory.getLog(getClass());
+    private boolean useStringBasedFormat;
     private int length = 0;
     private StringBuilder format = new StringBuilder();
 
+    /**
+     * By default, this produces a printf string that assumes it's getting all String objects.
+     * This is done to avoid the errors when trying to handle null objects like Double or Integer
+     * when applied to something like '%0-4d'.  If you  want to have it create the pure printf
+     * formats (like d and f) set this to false, but be sure not to pass any nulls!
+     * @param useStringBasedFormat
+     * @return
+     */
+    public FixedWidthFormatBuilder(boolean useStringBasedFormat){
+        this.useStringBasedFormat = useStringBasedFormat;   
+    }
+    public FixedWidthFormatBuilder(){
+        this.useStringBasedFormat = true;
+    }
+    
+    
     //start / end  overloads
     public FixedWidthFormatBuilder append(int start, int end) {
         return append(start, end, DEFAULT_FORMAT);
@@ -37,7 +54,7 @@ public class FixedWidthFormatBuilder {
         int gap = range.getMin() - 1 - this.length;
         if (gap > 0) {
             //gap from previous range, so pad it...
-            this.append(gap, Format.CONSTANT);
+            this.append(gap, Format.FILLER);
         }
         int width = range.getMax() - range.getMin() + 1;
         return this.append(width, format, value);
@@ -65,13 +82,28 @@ public class FixedWidthFormatBuilder {
         return this.toString();
     }
 
+    @Override
     public String toString() {
         return this.format.toString();
     }
 
     private String getFormat(Format type, int width) {
+        return this.useStringBasedFormat ?
+                getFormatUsingAllStrings(type, width) :
+                getFormatUsingPureFormat(type, width);
+    }
+    private String getFormatUsingAllStrings(Format type, int width) {
+        if (type == Format.FILLER) {
+            return StringUtils.rightPad(" ", width);
+        } else {
+            String flags = !type.isRightAligned() ? "-" : "";
+            return "%" + flags + width + "." + width + "s";
+        }
+        
+    }
+    private String getFormatUsingPureFormat(Format type, int width) {
         String fmt = null;
-        if (type == Format.CONSTANT) {
+        if (type == Format.FILLER) {
             fmt = StringUtils.rightPad(" ", width);
 
         } else if (type == Format.DECIMAL) {
@@ -101,4 +133,5 @@ public class FixedWidthFormatBuilder {
         }
         return fmt;
     }
+    
 }

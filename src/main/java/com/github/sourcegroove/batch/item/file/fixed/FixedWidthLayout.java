@@ -6,7 +6,7 @@ import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.fixed.reader.FixedWidthFileItemReader;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileFieldExtractor;
+import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthBeanWrapperFieldExtractor;
 import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileItemWriter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 public class FixedWidthLayout implements Layout {
     protected final Log log = LogFactory.getLog(getClass());
     private int linesToSkip = 0;
+    private boolean writeAsStrings = true;
     private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
     private List<FixedWidthRecordLayout> records = new ArrayList<>();
@@ -48,6 +49,27 @@ public class FixedWidthLayout implements Layout {
     public FixedWidthLayout linesToSkip(int linesToSkip) {
         this.linesToSkip = linesToSkip;
         return this;
+    }
+
+    /**
+     * Setting this to true will cause the FixedWidthFormatBuilder to create a
+     * line format using all strings (no printf decimals - %2d, etc)
+     * and the FixedWidthFileFieldExtract to extract values as Strings.
+     * 
+     * This allows you to pass null objects to those formats that would otherwise cause
+     * an exception - i.e. a null Double sent to %2f
+     * 
+     * Basically - it's safer... and therefore is the default
+     * 
+     * @param writeAsStrings
+     * @return
+     */
+    public FixedWidthLayout writeAsStrings(boolean writeAsStrings) {
+        this.writeAsStrings = writeAsStrings;
+        return this;
+    }
+    public boolean isWriteAsStrings() {
+        return this.writeAsStrings;
     }
 
     public FixedWidthLayout editor(Class clazz, PropertyEditor editor) {
@@ -108,6 +130,19 @@ public class FixedWidthLayout implements Layout {
         }
         return writer;
     }
+    private LineAggregator getLineAggregator(FixedWidthRecordLayout recordLayout) {
+        FixedWidthBeanWrapperFieldExtractor fieldExtractor = new FixedWidthBeanWrapperFieldExtractor();
+        fieldExtractor.setExtractAsStrings(this.writeAsStrings);
+        fieldExtractor.setNames(recordLayout.getMappableColumns());
+        fieldExtractor.setFormats(recordLayout.getMappableColumnFormats());
+        fieldExtractor.setCustomEditors(getWriteEditors(recordLayout));
+        
+        FormatterLineAggregator aggregator = new FormatterLineAggregator();
+        aggregator.setFieldExtractor(fieldExtractor);
+        aggregator.setFormat(recordLayout.getFormat());
+
+        return aggregator;
+    }
 
     public FixedWidthFileItemReader getItemReader() {
         Map<String, FieldSetMapper> mappers = new HashMap<>();
@@ -148,18 +183,7 @@ public class FixedWidthLayout implements Layout {
 
         return str.toString();
     }
-
-    private LineAggregator getLineAggregator(FixedWidthRecordLayout recordLayout) {
-        BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
-        extractor.setNames(recordLayout.getMappableColumns());
-        FixedWidthFileFieldExtractor fieldExtractor = new FixedWidthFileFieldExtractor();
-        fieldExtractor.setFieldExtractor(extractor);
-        fieldExtractor.setCustomEditors(getWriteEditors(recordLayout));
-        FormatterLineAggregator aggregator = new FormatterLineAggregator();
-        aggregator.setFieldExtractor(fieldExtractor);
-        aggregator.setFormat(recordLayout.getFormat());
-        return aggregator;
-    }
+    
 
     private Map<Class<?>, PropertyEditor> getReadEditors(FixedWidthRecordLayout recordLayout){
         Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();

@@ -4,11 +4,11 @@ import com.github.sourcegroove.batch.item.file.delimited.reader.DelimitedFileIte
 import com.github.sourcegroove.batch.item.file.delimited.writer.DelimitedFileItemWriter;
 import com.github.sourcegroove.batch.item.file.editor.DateEditor;
 import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileFieldExtractor;
+import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthBeanWrapperFieldExtractor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.Layout;
-import org.apache.poi.ss.formula.functions.Offset;
+import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthDelegatingFieldExtractor;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
@@ -19,7 +19,6 @@ import java.beans.PropertyEditor;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
-import java.time.ZonedDateTime;
 import java.util.*;
 
 public class DelimitedLayout implements Layout {
@@ -94,7 +93,7 @@ public class DelimitedLayout implements Layout {
         BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
         extractor.setNames(getColumns());
 
-        FixedWidthFileFieldExtractor fieldExtractor = new FixedWidthFileFieldExtractor();
+        FixedWidthDelegatingFieldExtractor fieldExtractor = new FixedWidthDelegatingFieldExtractor();
         fieldExtractor.setFieldExtractor(extractor);
         fieldExtractor.setCustomEditors(this.editors);
 

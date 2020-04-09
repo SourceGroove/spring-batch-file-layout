@@ -1,7 +1,7 @@
 package com.github.sourcegroove.batch.item.file.fixed.writer;
 
 import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileFieldExtractor;
+import com.github.sourcegroove.batch.item.file.fixed.Format;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import org.junit.Test;
@@ -15,7 +15,8 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class FixedWidthFileFieldExtractorTest {
+public class FixedWidthDelegatingFieldExtractorTest {
+
 
     @Test
     public void givenFieldSetWithCustomEditorsWhenAggregateThenLine() throws Exception {
@@ -27,7 +28,7 @@ public class FixedWidthFileFieldExtractorTest {
         Map<Class<?>, PropertyEditor> customEditors = new HashMap<>();
         customEditors.put(LocalDate.class, new LocalDateEditor(dateFormat));
 
-        FixedWidthFileFieldExtractor decorator = new FixedWidthFileFieldExtractor();
+        FixedWidthDelegatingFieldExtractor decorator = new FixedWidthDelegatingFieldExtractor();
         decorator.setFieldExtractor(extractor);
         decorator.setCustomEditors(customEditors);
         decorator.afterPropertiesSet();

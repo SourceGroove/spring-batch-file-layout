@@ -28,7 +28,7 @@ public class FixedWidthRecordLayout {
     private RecordType recordType;
     private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
-    private FixedWidthFormatBuilder format = new FixedWidthFormatBuilder();
+    private FixedWidthFormatBuilder format;
     private List<String> columns = new ArrayList<>();
     private List<Range> columnRanges = new ArrayList<>();
     private List<Format> columnFormats = new ArrayList<>();
@@ -38,6 +38,7 @@ public class FixedWidthRecordLayout {
         this.targetType = targetType;
         this.fileLayout = fileLayout;
         this.strict = true;
+        this.format = new FixedWidthFormatBuilder(fileLayout.isWriteAsStrings());
     }
 
     public RecordType getRecordType(){
@@ -97,16 +98,7 @@ public class FixedWidthRecordLayout {
     public Range[] getColumnRanges() {
         return this.columnRanges.toArray(new Range[this.columnRanges.size()]);
     }
-    public Range[] getMappableColumnRanges() {
-        List<Range> ranges = new ArrayList<>();
-        for (int i = 0; i < this.columns.size(); i++) {
-            if(!StringUtils.equals(this.columns.get(i), NON_FIELD_COLUMN)){
-                ranges.add(this.columnRanges.get(i));
-            }
-        }
-        return ranges.toArray(new Range[ranges.size()]);
-    }
-
+    
     public String[] getColumns() {
         return this.columns.toArray(new String[this.columns.size()]);
     }
@@ -116,13 +108,31 @@ public class FixedWidthRecordLayout {
                 .collect(Collectors.toList());
         return mappable.toArray(new String[mappable.size()]);
     }
+    public Range[] getMappableColumnRanges() {
+        List<Range> ranges = new ArrayList<>();
+        for (int i = 0; i < this.columns.size(); i++) {
+            if(!StringUtils.equals(this.columns.get(i), NON_FIELD_COLUMN)){
+                ranges.add(this.columnRanges.get(i));
+            }
+        }
+        return ranges.toArray(new Range[ranges.size()]);
+    }
+    public Format[] getMappableColumnFormats() {
+        List<Format> formats = new ArrayList<>();
+        for (int i = 0; i < this.columns.size(); i++) {
+            if(!StringUtils.equals(this.columns.get(i), NON_FIELD_COLUMN)){
+                formats.add(this.columnFormats.get(i));
+            }
+        }
+        return formats.toArray(new Format[formats.size()]);
+    }
 
     //filler and constant columns (non-mappable)
     public FixedWidthRecordLayout column(int start, int end) {
-        return column(NON_FIELD_COLUMN, new Range(start, end), Format.CONSTANT, null);
+        return column(NON_FIELD_COLUMN, new Range(start, end), Format.FILLER, null);
     }
     public FixedWidthRecordLayout column(int width, String value) {
-        return column(NON_FIELD_COLUMN, getRange(width), Format.CONSTANT, value);
+        return column(NON_FIELD_COLUMN, getRange(width), Format.FILLER, value);
     }
     public FixedWidthRecordLayout column(int start, int end, String value) {
         Range range = new Range(start, end);
@@ -148,7 +158,7 @@ public class FixedWidthRecordLayout {
 
     public FixedWidthRecordLayout column(String name, Range range, Format format, String value) {
         if(format == null){
-            format = value != null ? Format.STRING : Format.CONSTANT;
+            format = value != null ? Format.STRING : Format.FILLER;
         }
         this.columnRanges.add(range);
         this.columns.add(name);
@@ -198,7 +208,7 @@ public class FixedWidthRecordLayout {
             Range range = this.columnRanges.get(i);
             boolean lastColumn = i == this.columns.size() - 1;
             
-            if(name == NON_FIELD_COLUMN &&  fmt == Format.CONSTANT){
+            if(name == NON_FIELD_COLUMN &&  fmt == Format.FILLER){
                 //include the last because we need to have the trailing column so the line length is represented correctly
                 if(lastColumn) {
                     str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");

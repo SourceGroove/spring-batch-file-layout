@@ -11,11 +11,25 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FixedWidthFileFieldExtractor<T> implements FieldExtractor<T>, InitializingBean {
-    protected static final Log log = LogFactory.getLog(FixedWidthFileFieldExtractor.class);
+public class FixedWidthDelegatingFieldExtractor<T> implements FieldExtractor<T>, InitializingBean {
+    protected static final Log log = LogFactory.getLog(FixedWidthBeanWrapperFieldExtractor.class);
     private FieldExtractor<T> fieldExtractor;
     private Map<Class<?>, PropertyEditor> customEditors;
+    private boolean extractAsStrings;
 
+    /**
+     * By default this extractor will extract fields as their native type, but
+     * if this is set to true, then they will all be converted to String objects
+     * using any provided format mechanisms (property editors or column formats).
+     *
+     * *note - property editors will always return strings for their types regardless
+     * of this value.  This is for passing the extracted fields to a format created from the
+     * FixedWidthFormatBuilder when it's usePureFormat is set to false.
+     * @param extractAsStrings
+     */
+    public void setExtractAsStrings(boolean extractAsStrings){
+        this.extractAsStrings = extractAsStrings;
+    }
     public void setFieldExtractor(FieldExtractor<T> fieldExtractor){
         this.fieldExtractor = fieldExtractor;
     }
