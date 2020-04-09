@@ -37,6 +37,45 @@ a physical file at runtime.
 * **FileLayoutItemWriter** - an interface that extends ResourceAwareItemReaderWriterStream<T> and InitializingBean - used to enforce 
                         FileLayout implementations to return appropriate writer implementations.
  
+# Notes
+- For fixed width files, use start/end (ranges) over width  where possible (widths are sketchy when you start incorporating filler and custom formats.. )
+- The Excel item writer isn't implemented yet
+- PropertyEditors with Format.xxx values - be careful mixing the two because you can run into issues.  Consider the below layout, and using the 
+    layout.getItemWriter().  The editor will convert the dateOfBirth to a string as 'YYYYMMDD' and then the Format.YYYYMMDD will  try and treat
+    the dateOfBirth value as a date and do 'String.print("%tY%<tm%<td",  dateOfBirthValue)'.  This will throw an exception because the dateOfBirthValue 
+    is a String not a date object.
+```
+FileLayout layout = new FixedWidthFileLayout()
+    .record(MockUserRecord.class)
+        .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+        .column("recordType", 1, 4)
+        .column("username", 5, 10)
+        .column("firstName", 11, 20)
+        .column("lastName", 21, 30)
+        .column("dateOfBirth", 31, 38, Format.YYYYMMDD)
+    .build();
+```
+Because of this, the library will allow you to add editors in different ways:
+ - Globally to all record types in the layout
+ - Globally to all readers for all record types in the layout
+ - Globally to all writers for all record types in the layout
+ - At the record level for all readers and writers
+ - At the record level for readers only
+ - At the record level for writers only
+
+Any editor added at the record level for the same object type defined at the global level will be overwritten for that record.  i.e:
+```java
+FileLayout layout = new FixedWidthFileLayout()
+    .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+    .record(MockUserRecord.class, "USER")
+        .readEditor(LocalDate.class, new LocalDateEditor("MM/dd/yyyy"))
+        .column("dateOfBirth", 1, 7)
+    .record(MockRoleRecord.class, "Role")
+        .column("effectiveDate", 1, 7)
+    .build();
+``` 
+In  this case, the MockUserRecord#dateOfBirth will use 'MM/dd/yyyy' and the MockRoleRecord#effectiveDate will use yyyyMMdd for reading only  
+
 # Usage
 
 ## Maven Dependency
@@ -44,7 +83,7 @@ a physical file at runtime.
 <dependency>
   <groupId>com.github.sourcegroove</groupId>
   <artifactId>spring-batch-file-layout</artifactId>
-  <version>1.3.2</version>
+  <version>1.3.10</version>
 </dependency>
 ```
 
