@@ -46,7 +46,7 @@ public class FixedWidthLayoutTest {
     public void givenFixedLayoutWithMultipleRecordTypesWhenWriteAndReadAlotThenPerformant() throws Exception {
         Layout layout = new FixedWidthLayout()
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                 .prefix("USER*")
                 .column("recordType", 1, 4)
                 .column("username", 5, 10)
@@ -82,7 +82,7 @@ public class FixedWidthLayoutTest {
     public void givenFixedLayoutWhenWriteRecordTypesNotInLayoutThenError() throws Exception {
         Layout layout = new FixedWidthLayout()
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                 .prefix("user*")
                 .column("username", 1, 10)
                 .column("firstName", 11, 20)
@@ -102,9 +102,10 @@ public class FixedWidthLayoutTest {
     @Test
     public void givenFixedLayoutWithMultipleRecordTypesWhenWrittenThenAllTypesWritten() throws Exception {
         Layout layout = new FixedWidthLayout()
-                .record(MockUserRecord.class)
                 .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .record(MockUserRecord.class)
                 .prefix("USER*")
+                .strict(false)
                 .column("recordType", 1, 4)
                 .column("username", 5, 10)
                 .column("firstName", 11, 20)
@@ -113,6 +114,7 @@ public class FixedWidthLayoutTest {
                 .column("dateOfBirth", 51, 58)
                 .record(MockRoleRecord.class)
                 .prefix("ROLE*")
+                .strict(false)
                 .column("recordType", 1, 4)
                 .column("roleKey", 5, 8)
                 .column("role", 9, 20)
@@ -144,8 +146,8 @@ public class FixedWidthLayoutTest {
     @Test
     public void givenFixedLayoutAndRecordsWithFillerWhenWriteThenWrittenWithFiller() throws Exception {
         Layout layout = new FixedWidthLayout()
-                .record(MockUserRecord.class)
                 .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .record(MockUserRecord.class)
                 .prefix("USER*")
                 .column("recordType", 1, 4)
                 .column("username", 5, 10)
@@ -173,8 +175,8 @@ public class FixedWidthLayoutTest {
     @Test
     public void givenFixedLayoutAndRecordsWithNoFillerWhenWriteThenWriten() throws Exception {
         Layout layout = new FixedWidthLayout()
-                .record(MockUserRecord.class)
                 .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .record(MockUserRecord.class)
                 .prefix("USER*")
                 .column("recordType", 1, 4)
                 .column("username", 5, 10)
@@ -204,7 +206,8 @@ public class FixedWidthLayoutTest {
         Layout layout = new FixedWidthLayout()
                 .linesToSkip(1)
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .strict(false)
+                .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                 .prefix("USER*")
                 .column("recordType", 1, 4)
                 .column("username", 5, 10)
@@ -214,6 +217,7 @@ public class FixedWidthLayoutTest {
                 .column(36, 40)
                 .column("dateOfBirth", 41, 48)
                 .record(MockRoleRecord.class)
+                .strict(false)
                 .prefix("ROLE*")
                 .column("recordType", 1, 4)
                 .column("roleKey", 5, 8)
@@ -237,7 +241,7 @@ public class FixedWidthLayoutTest {
         Layout layout = new FixedWidthLayout()
                 .linesToSkip(1)
                 .record(MockUserRecord.class)
-                .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
                 .column("recordType", 1, 4)
                 .column("username", 5, 10)
                 .column("firstName", 11, 20)

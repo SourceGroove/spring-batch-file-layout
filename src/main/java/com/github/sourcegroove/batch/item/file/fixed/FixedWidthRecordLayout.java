@@ -1,9 +1,5 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
-import com.github.sourcegroove.batch.item.file.editor.DateEditor;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
-import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
@@ -11,10 +7,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FixedWidthRecordLayout {
@@ -28,8 +24,10 @@ public class FixedWidthRecordLayout {
     private FixedWidthLayout fileLayout;
     private Class targetType;
     private String prefix = "*";
+    private boolean strict;
     private RecordType recordType;
-    private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+    private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
+    private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
     private FixedWidthFormatBuilder format = new FixedWidthFormatBuilder();
     private List<String> columns = new ArrayList<>();
     private List<Range> columnRanges = new ArrayList<>();
@@ -39,10 +37,7 @@ public class FixedWidthRecordLayout {
         this.recordType = RecordType.RECORD;
         this.targetType = targetType;
         this.fileLayout = fileLayout;
-        this.editor(LocalDate.class, new LocalDateEditor());
-        this.editor(LocalDateTime.class, new LocalDateTimeEditor());
-        this.editor(OffsetDateTime.class, new OffsetDateTimeEditor());
-        this.editor(Date.class, new DateEditor());
+        this.strict = true;
     }
 
     public RecordType getRecordType(){
@@ -51,11 +46,16 @@ public class FixedWidthRecordLayout {
     public Class getTargetType() {
         return this.targetType;
     }
-
+    public boolean isStrict(){
+        return this.strict;
+    }
     public String getPrefix() {
         return this.prefix;
     }
-
+    public FixedWidthRecordLayout strict(boolean strict) {
+        this.strict = strict;
+        return this;
+    }
     public FixedWidthRecordLayout recordType(RecordType recordType) {
         this.recordType = recordType;
         return this;
@@ -68,12 +68,25 @@ public class FixedWidthRecordLayout {
         return this;
     }
 
-    public Map<Class<?>, PropertyEditor> getEditors() {
-        return this.editors;
+    public Map<Class<?>, PropertyEditor> getReadEditors() {
+        return this.readEditors;
     }
 
     public FixedWidthRecordLayout editor(Class clazz, PropertyEditor editor) {
-        this.editors.put(clazz, editor);
+        this.readEditors.put(clazz, editor);
+        this.writeEditors.put(clazz, editor);
+        return this;
+    }
+    public FixedWidthRecordLayout readEditor(Class clazz, PropertyEditor editor) {
+        this.readEditors.put(clazz, editor);
+        return this;
+    }
+    public Map<Class<?>, PropertyEditor> getWriteEditors() {
+        return this.writeEditors;
+    }
+
+    public FixedWidthRecordLayout writeEditor(Class clazz, PropertyEditor editor) {
+        this.writeEditors.put(clazz, editor);
         return this;
     }
 
@@ -171,16 +184,26 @@ public class FixedWidthRecordLayout {
     public String toString() {
         StringBuilder str = new StringBuilder()
                 .append(".").append(recordType.name().toLowerCase())
-                .append("(").append(this.getTargetType().getSimpleName()).append(".class)\n")
-                .append("    //.format(\"").append(this.getFormat()).append("\")\n")
-                .append("    .prefix(\"").append(this.getPrefix()).append("\")\n");
+                .append("(").append(this.getTargetType().getSimpleName()).append(".class, \"").append(this.getPrefix()).append("\")\n")
+                .append("    //.format(\"").append(this.getFormat()).append("\")\n");
         for (int i = 0; i < this.columns.size(); i++) {
-            str.append("    .column(\"")
-                    .append(this.columns.get(i)).append("\", ")
-                    .append(this.columnRanges.get(i).getMin()).append(", ")
-                    .append(this.columnRanges.get(i).getMax()).append(", ")
-                    .append("Format.").append(this.columnFormats.get(i))
-                    .append(")\n");
+            Format fmt = this.columnFormats.get(i);
+            String name = this.columns.get(i);
+            Range range = this.columnRanges.get(i);
+    
+            if(name == NON_FIELD_COLUMN &&  fmt == Format.CONSTANT){
+               //str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
+            } else if(fmt == Format.STRING) {
+                str.append("    .column(\"").append(name).append("\", ").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
+            } else {
+                str.append("    .column(\"")
+                        .append(name).append("\", ")
+                        .append(range.getMin()).append(", ")
+                        .append(range.getMax())
+                        .append(", ").append("Format.").append(fmt)
+                        .append(")\n");
+            }
+            
         }
         return str.toString();
     }
