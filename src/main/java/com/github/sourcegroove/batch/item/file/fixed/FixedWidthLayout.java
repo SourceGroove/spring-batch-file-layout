@@ -51,7 +51,7 @@ public class FixedWidthLayout implements Layout {
         return this;
     }
 
-    /**
+    /*
      * Setting this to true will cause the FixedWidthFormatBuilder to create a
      * line format using all strings (no printf decimals - %2d, etc)
      * and the FixedWidthFileFieldExtract to extract values as Strings.
@@ -60,9 +60,6 @@ public class FixedWidthLayout implements Layout {
      * an exception - i.e. a null Double sent to %2f
      * 
      * Basically - it's safer... and therefore is the default
-     * 
-     * @param writeAsStrings <tt>true</tt> to write as strings
-     * @return this builder
      */
     public FixedWidthLayout writeAsStrings(boolean writeAsStrings) {
         this.writeAsStrings = writeAsStrings;
