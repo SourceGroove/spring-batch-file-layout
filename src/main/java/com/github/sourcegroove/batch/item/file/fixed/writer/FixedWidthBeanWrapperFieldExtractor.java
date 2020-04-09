@@ -31,7 +31,7 @@ public class FixedWidthBeanWrapperFieldExtractor<T> implements FieldExtractor<T>
     private List<String> names;
     private boolean extractAsStrings;
 
-    /**
+    /*
      * By default this extractor will extract fields as their native type, but
      * if this is set to true, then they will all be converted to String objects
      * using any provided format mechanisms (property editors or column formats).

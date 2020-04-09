@@ -6,7 +6,7 @@ import org.springframework.batch.item.file.ResourceAwareItemWriterItemStream;
 import org.springframework.beans.factory.InitializingBean;
 
 public interface LayoutItemWriter<T> extends ResourceAwareItemWriterItemStream<T>, InitializingBean {
-    public final Log log = LogFactory.getLog(LayoutItemWriter.class);
+    Log log = LogFactory.getLog(LayoutItemWriter.class);
 
     default void enableHeaderCallback(Object object){
         log.debug("enableHeaderCallback not implemented in writer");
