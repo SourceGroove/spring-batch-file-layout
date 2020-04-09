@@ -115,12 +115,13 @@ public class FixedWidthLayout implements Layout {
         for (FixedWidthRecordLayout recordLayout : this.records) {
             BeanWrapperFieldSetMapper fieldSetMapper = new BeanWrapperFieldSetMapper();
             fieldSetMapper.setDistanceLimit(0);
+            fieldSetMapper.setStrict(recordLayout.isStrict());
             fieldSetMapper.setTargetType(recordLayout.getTargetType());
             fieldSetMapper.setCustomEditors(getReadEditors(recordLayout));
             FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
             tokenizer.setStrict(recordLayout.isStrict());
-            tokenizer.setNames(recordLayout.getMappableColumns());
-            tokenizer.setColumns(recordLayout.getMappableColumnRanges());
+            tokenizer.setNames(recordLayout.getColumns());
+            tokenizer.setColumns(recordLayout.getColumnRanges());
             mappers.put(recordLayout.getPrefix(), fieldSetMapper);
             tokenizers.put(recordLayout.getPrefix(), tokenizer);
         }

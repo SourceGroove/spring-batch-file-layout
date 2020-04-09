@@ -37,7 +37,6 @@ public class FixedWidthRecordLayout {
         this.recordType = RecordType.RECORD;
         this.targetType = targetType;
         this.fileLayout = fileLayout;
-        this.strict = true;
     }
 
     public RecordType getRecordType(){
@@ -94,6 +93,9 @@ public class FixedWidthRecordLayout {
         return this.format.toString();
     }
 
+    public Range[] getColumnRanges() {
+        return this.columnRanges.toArray(new Range[this.columnRanges.size()]);
+    }
     public Range[] getMappableColumnRanges() {
         List<Range> ranges = new ArrayList<>();
         for (int i = 0; i < this.columns.size(); i++) {
@@ -104,6 +106,9 @@ public class FixedWidthRecordLayout {
         return ranges.toArray(new Range[ranges.size()]);
     }
 
+    public String[] getColumns() {
+        return this.columns.toArray(new String[this.columns.size()]);
+    }
     public String[] getMappableColumns() {
         List<String> mappable = this.columns.stream()
                 .filter(c -> !StringUtils.equals(c, NON_FIELD_COLUMN))
@@ -192,7 +197,7 @@ public class FixedWidthRecordLayout {
             Range range = this.columnRanges.get(i);
     
             if(name == NON_FIELD_COLUMN &&  fmt == Format.CONSTANT){
-               //str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
+               str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
             } else if(fmt == Format.STRING) {
                 str.append("    .column(\"").append(name).append("\", ").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
             } else {
