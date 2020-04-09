@@ -13,13 +13,12 @@ public class FixedWidthFormatBuilder {
     private int length = 0;
     private StringBuilder format = new StringBuilder();
 
-    /**
+    /*
      * By default, this produces a printf string that assumes it's getting all String objects.
      * This is done to avoid the errors when trying to handle null objects like Double or Integer
      * when applied to something like '%0-4d'.  If you  want to have it create the pure printf
      * formats (like d and f) set this to false, but be sure not to pass any nulls!
-     * @param useStringBasedFormat creates a format that expects all params to be Strings
-     * @return this - the builder...
+     * param useStringBasedFormat creates a format that expects all params to be Strings
      */
     public FixedWidthFormatBuilder(boolean useStringBasedFormat){
         this.useStringBasedFormat = useStringBasedFormat;   
