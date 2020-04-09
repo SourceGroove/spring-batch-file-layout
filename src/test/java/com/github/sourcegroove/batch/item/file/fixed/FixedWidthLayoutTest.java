@@ -8,24 +8,40 @@ import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.ResourceAwareItemReaderItemStream;
-import org.springframework.batch.item.file.transform.IncorrectLineLengthException;
-import org.springframework.batch.item.file.transform.Range;
 import org.springframework.core.io.Resource;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class FixedWidthLayoutTest {
+    private static final Log log = LogFactory.getLog(FixedWidthLayoutTest.class);
     private static final String SAMPLE_FIXED = "sample-file.txt";
     private static final String SAMPLE_FIXED_MULTIPLE_TYPES = "sample-file-record-types.txt";
 
+
+    @Test
+    public void givenLeadingFillerWhenCreateThenCorrectRanges() throws Exception {
+        Layout layout = new FixedWidthLayout()
+                .header(MockUserRecord.class, "HEAD")
+                    .column(1, 20, "HEAD")
+                    .column(21, 22, "X")
+                .record(MockUserRecord.class)
+                    .column(10, "0123456789")
+                    .column("fieldName", 5)
+                .footer(MockUserRecord.class, "FOOT")
+                    .column(1, 20, "HEAD")
+                    .column(21, 22, "X")
+                .layout();
+        log.info(layout);
+    }
     @Test
     public void givenFixedLayoutWithMultipleRecordTypesWhenWriteAndReadAlotThenPerformant() throws Exception {
         Layout layout = new FixedWidthLayout()
@@ -43,6 +59,8 @@ public class FixedWidthLayoutTest {
                 .column("roleKey", 5, 8)
                 .column("role", 9, 20)
                 .layout();
+
+        log.info(layout);
 
         List<Object> records = new ArrayList<>();
         records.addAll(MockFactory.getUsers(10000));
@@ -72,6 +90,8 @@ public class FixedWidthLayoutTest {
                 .column("dateOfBirth", 41, 48)
                 .layout();
 
+        log.info(layout);
+
         Resource file = MockFactory.createResource("sample-file-output-missing-record-type.txt");
         LayoutItemWriter writer = layout.getItemWriter();
         writer.setResource(file);
@@ -89,13 +109,17 @@ public class FixedWidthLayoutTest {
                 .column("username", 5, 10)
                 .column("firstName", 11, 20)
                 .column("lastName", 31, 40)
-                .column("dateOfBirth", 41, 48)
+                .column(41, 50)
+                .column("dateOfBirth", 51, 58)
                 .record(MockRoleRecord.class)
                 .prefix("ROLE*")
                 .column("recordType", 1, 4)
                 .column("roleKey", 5, 8)
                 .column("role", 9, 20)
+                .column(21, 30)
                 .layout();
+
+        log.info(layout);
 
         List<Object> records = new ArrayList<>();
         records.addAll(MockFactory.getUsers());
@@ -130,6 +154,8 @@ public class FixedWidthLayoutTest {
                 .column("dateOfBirth", 41, 48)
                 .layout();
 
+        log.info(layout);
+
         Resource file = MockFactory.createResource("sample-file-output-no-filler.txt");
         LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
         writer.setResource(file);
@@ -157,6 +183,8 @@ public class FixedWidthLayoutTest {
                 .column("dateOfBirth", 31, 38)
                 .layout();
 
+        log.info(layout);
+
         Resource file = MockFactory.createResource("sample-file-output-no-filler.txt");
         LayoutItemWriter<MockUserRecord> writer = layout.getItemWriter();
         writer.setResource(file);
@@ -182,13 +210,17 @@ public class FixedWidthLayoutTest {
                 .column("username", 5, 10)
                 .column("firstName", 11, 20)
                 .column("lastName", 21, 30)
-                .column("dateOfBirth", 31, 38)
+                .column(31, 35, "XX")
+                .column(36, 40)
+                .column("dateOfBirth", 41, 48)
                 .record(MockRoleRecord.class)
                 .prefix("ROLE*")
                 .column("recordType", 1, 4)
                 .column("roleKey", 5, 8)
                 .column("role", 9, 20)
                 .layout();
+
+        log.info(layout);
 
         LayoutItemReader reader = layout.getItemReader();
         reader.setResource(MockFactory.getResource(SAMPLE_FIXED_MULTIPLE_TYPES));
@@ -212,6 +244,8 @@ public class FixedWidthLayoutTest {
                 .column("lastName", 21, 30)
                 .column("dateOfBirth", 31, 38)
                 .layout();
+
+        log.info(layout);
 
         LayoutItemReader reader = layout.getItemReader();
         reader.setResource(MockFactory.getResource(SAMPLE_FIXED));

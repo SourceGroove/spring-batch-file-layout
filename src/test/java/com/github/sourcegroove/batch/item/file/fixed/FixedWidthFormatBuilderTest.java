@@ -1,6 +1,5 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
-import com.github.sourcegroove.batch.item.file.fixed.FixedWidthFormatBuilder;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -12,7 +11,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenZDFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.ZD)
+                .append(1, 10, Format.ZD)
                 .build();
 
         assertEquals("%-10.10s", format);
@@ -24,7 +23,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenDecimalFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.DECIMAL)
+                .append(1, 10, Format.DECIMAL)
                 .build();
 
         assertEquals("%010.2f", format);
@@ -35,7 +34,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenIntegerFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.INTEGER)
+                .append(1, 10, Format.INTEGER)
                 .build();
         assertEquals("%010d", format);
         String line = String.format(format, 6);
@@ -46,7 +45,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenYYYYFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.YYYY)
+                .append(1, 10, Format.YYYY)
                 .build();
 
         assertEquals("%tY", format);
@@ -57,7 +56,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenYYYYMMDDFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.YYYYMMDD)
+                .append(1, 10, Format.YYYYMMDD)
                 .build();
 
         assertEquals("%tY%<tm%<td", format);
@@ -68,7 +67,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenMMYYYYFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.MMYYYY)
+                .append(1, 10, Format.MMYYYY)
                 .build();
 
         assertEquals("%tm%<tY", format);
@@ -79,7 +78,7 @@ public class FixedWidthFormatBuilderTest {
     @Test
     public void givenYYYMMFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthFormatBuilder()
-                .append(1, 10, FixedWidthFormatBuilder.Format.YYYYMM)
+                .append(1, 10, Format.YYYYMM)
                 .build();
 
         assertEquals("%tY%<tm", format);

@@ -1,5 +1,5 @@
-typeuname first     last      dob     
-USER0001  Neo       Anderson  19780930
-USER0002  Trinity   Smith     19800627
+typeuname first     last                dob
+USER0001  Neo       Anderson            19780930
+USER0002  Trinity   Smith               19800627
 ROLE000ASYSTEM_ADMIN
-ROLE000BUSER        
+ROLE000BUSER
