@@ -40,7 +40,7 @@ public class FixedWidthBeanWrapperFieldExtractor<T> implements FieldExtractor<T>
      * of this value.  This is for passing the extracted fields to a format created from the
      * FixedWidthFormatBuilder when it's usePureFormat is set to false.
      *
-     * @param extractAsStrings
+     * @param extractAsStrings <tt>true</tt> to pre format all values to String
      */
     public void setExtractAsStrings(boolean extractAsStrings) {
         this.extractAsStrings = extractAsStrings;

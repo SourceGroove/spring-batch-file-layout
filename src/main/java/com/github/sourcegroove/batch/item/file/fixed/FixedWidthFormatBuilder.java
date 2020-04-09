@@ -18,8 +18,8 @@ public class FixedWidthFormatBuilder {
      * This is done to avoid the errors when trying to handle null objects like Double or Integer
      * when applied to something like '%0-4d'.  If you  want to have it create the pure printf
      * formats (like d and f) set this to false, but be sure not to pass any nulls!
-     * @param useStringBasedFormat
-     * @return
+     * @param useStringBasedFormat creates a format that expects all params to be Strings
+     * @return this - the builder...
      */
     public FixedWidthFormatBuilder(boolean useStringBasedFormat){
         this.useStringBasedFormat = useStringBasedFormat;   

@@ -10,7 +10,7 @@ import java.util.Set;
  * If you use the ExcelLayout to build your reader/writers, it will add editors for LocalDate and LocalDateTime using
  * this format by default.
  *
- * @param <T>
+ * @param <T> record type
  */
 public interface ExcelItemReader<T> extends LayoutItemReader<T> {
     void setLinesToSkip(int linesToSkip);
