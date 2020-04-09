@@ -37,6 +37,7 @@ public class FixedWidthRecordLayout {
         this.recordType = RecordType.RECORD;
         this.targetType = targetType;
         this.fileLayout = fileLayout;
+        this.strict = true;
     }
 
     public RecordType getRecordType(){
@@ -195,9 +196,13 @@ public class FixedWidthRecordLayout {
             Format fmt = this.columnFormats.get(i);
             String name = this.columns.get(i);
             Range range = this.columnRanges.get(i);
-    
+            boolean lastColumn = i == this.columns.size() - 1;
+            
             if(name == NON_FIELD_COLUMN &&  fmt == Format.CONSTANT){
-               str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
+                //include the last because we need to have the trailing column so the line length is represented correctly
+                if(lastColumn) {
+                    str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
+                }
             } else if(fmt == Format.STRING) {
                 str.append("    .column(\"").append(name).append("\", ").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
             } else {
