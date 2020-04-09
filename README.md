@@ -183,6 +183,36 @@ LayoutItemReader reader = layout.getItemReader();
 LayoutItemWriter writer = layout.getItemWriter();
 ```
 
+### Fixed width file layout with header and footer callbacks
+Header and footer write callbacks are implemented by defining a header and/or footer record and then 'enabling' the callback
+at runtime (so you can provide  it with data).
+```java
+FileLayout layout = new FixedWidthFileLayout()
+    .header(MockHeaderRecord.class, "HEAD")
+        .column("recordType",  1, 4)
+        .column("recordCount", 5, 100, Format.INTEGER)
+    .record(MockUserRecord.class, "USER")
+        .editor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+        .column("recordType", 1, 4)
+        .column("username", 5, 10)
+        .column("firstName", 11, 20)
+        .column("lastName", 21, 30)
+        .column("dateOfBirth", 31, 38, FixedWidthFormatBuilder.Format.YYYYMM)
+    .build();
+
+... in your job ...
+
+@Bean
+@StepScope
+public LayoutItemWriter<FileRecord> itemWriter() {
+    LayoutItemWriter<MockUserRecord> writer = getLayout().getItemWriter();
+    writer.setResource(resource);
+    writer.enableHeaderCallback(recordCount);
+    return writer;
+}
+```
+Footer callback is identical
+
 ## Delimited Layouts
 Delimited layouts need to define the columns in the order they appear in the file. 
 The delimiter and qualifier can be defined.
