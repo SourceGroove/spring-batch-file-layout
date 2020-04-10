@@ -254,6 +254,7 @@ public class FixedWidthLayoutTest {
         LayoutItemReader reader = layout.getItemReader();
         reader.setResource(MockFactory.getResource(SAMPLE_FIXED));
         reader.open(new ExecutionContext());
+        log.info(reader.getClass());
         MockFactory.assertNeo((MockUserRecord) reader.read());
         MockFactory.assertTrinity((MockUserRecord) reader.read());
     }

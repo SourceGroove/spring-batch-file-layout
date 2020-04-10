@@ -28,7 +28,7 @@ public class FixedWidthRecordLayout {
     private RecordType recordType;
     private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
-    private FixedWidthFormatBuilder format;
+    private FixedWidthLineFormatBuilder format;
     private List<String> columns = new ArrayList<>();
     private List<Range> columnRanges = new ArrayList<>();
     private List<Format> columnFormats = new ArrayList<>();
@@ -38,7 +38,7 @@ public class FixedWidthRecordLayout {
         this.targetType = targetType;
         this.fileLayout = fileLayout;
         this.strict = true;
-        this.format = new FixedWidthFormatBuilder(fileLayout.isWriteAsStrings());
+        this.format = new FixedWidthLineFormatBuilder(fileLayout.isWriteAsStrings());
     }
 
     public RecordType getRecordType(){

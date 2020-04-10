@@ -5,7 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.Range;
 
-public class FixedWidthFormatBuilder {
+public class FixedWidthLineFormatBuilder {
 
     private static final Format DEFAULT_FORMAT = Format.STRING;
     private final Log log = LogFactory.getLog(getClass());
@@ -20,36 +20,36 @@ public class FixedWidthFormatBuilder {
      * formats (like d and f) set this to false, but be sure not to pass any nulls!
      * param useStringBasedFormat creates a format that expects all params to be Strings
      */
-    public FixedWidthFormatBuilder(boolean useStringBasedFormat){
+    public FixedWidthLineFormatBuilder(boolean useStringBasedFormat){
         this.useStringBasedFormat = useStringBasedFormat;   
     }
-    public FixedWidthFormatBuilder(){
+    public FixedWidthLineFormatBuilder(){
         this.useStringBasedFormat = true;
     }
     
     
     //start / end  overloads
-    public FixedWidthFormatBuilder append(int start, int end) {
+    public FixedWidthLineFormatBuilder append(int start, int end) {
         return append(start, end, DEFAULT_FORMAT);
     }
-    public FixedWidthFormatBuilder append(int start, int end, String value) {
+    public FixedWidthLineFormatBuilder append(int start, int end, String value) {
         return append(new Range(start, end), value);
     }
-    public FixedWidthFormatBuilder append(int start, int end, Format format) {
+    public FixedWidthLineFormatBuilder append(int start, int end, Format format) {
         return this.append(new Range(start, end), format);
     }
 
     // range overloads
-    public FixedWidthFormatBuilder append(Range range) {
+    public FixedWidthLineFormatBuilder append(Range range) {
         return this.append(range, DEFAULT_FORMAT);
     }
-    public FixedWidthFormatBuilder append(Range range, String value) {
+    public FixedWidthLineFormatBuilder append(Range range, String value) {
         return append(range, Format.STRING, value);
     }
-    public FixedWidthFormatBuilder append(Range range, Format format) {
+    public FixedWidthLineFormatBuilder append(Range range, Format format) {
         return append(range, format, null);
     }
-    public FixedWidthFormatBuilder append(Range range, Format format, String value) {
+    public FixedWidthLineFormatBuilder append(Range range, Format format, String value) {
         int gap = range.getMin() - 1 - this.length;
         if (gap > 0) {
             //gap from previous range, so pad it...
@@ -60,13 +60,13 @@ public class FixedWidthFormatBuilder {
     }
 
     //width overloads
-    public FixedWidthFormatBuilder append(int width) {
+    public FixedWidthLineFormatBuilder append(int width) {
         return this.append(width, DEFAULT_FORMAT);
     }
-    public FixedWidthFormatBuilder append(int width, Format format) {
+    public FixedWidthLineFormatBuilder append(int width, Format format) {
         return append(width, format, null);
     }
-    public FixedWidthFormatBuilder append(int width, Format format, String value) {
+    public FixedWidthLineFormatBuilder append(int width, Format format, String value) {
         String str = getFormat(format, width);
         if(value != null){
             str = String.format(str, StringUtils.leftPad(StringUtils.left(value, width), width));

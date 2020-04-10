@@ -1,13 +1,12 @@
 package com.github.sourcegroove.batch.item.file.fixed.writer;
 
-import com.github.sourcegroove.batch.item.file.fixed.FixedWidthFormatBuilder;
+import com.github.sourcegroove.batch.item.file.fixed.FixedWidthLineFormatBuilder;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.FormatterLineAggregator;
 import org.springframework.batch.item.file.transform.LineAggregator;
 
@@ -20,7 +19,7 @@ public class FixedWidthFileItemWriterTest {
 
     @Test
     public void givenLineAggregatorWriteAndReadAlotThenPerformant() throws Exception {
-        String format = new FixedWidthFormatBuilder().append(1, 10).toString();
+        String format = new FixedWidthLineFormatBuilder().append(1, 10).toString();
 
         Map<Class, LineAggregator> lineAggregators = new HashMap<>();
         lineAggregators.put(MockUserRecord.class, getLineAggregator(Arrays.asList("firstName"), format));
