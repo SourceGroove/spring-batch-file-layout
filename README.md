@@ -75,6 +75,22 @@ FileLayout layout = new FixedWidthFileLayout()
 ``` 
 In  this case, the MockUserRecord#dateOfBirth will use 'MM/dd/yyyy' and the MockRoleRecord#effectiveDate will use yyyyMMdd for reading only  
 
+Additionally, column level formats will preside over all others.  
+
+Consider the following example where MockRecord has three LocalDate properties - favoriteYear, birthMonth and effectiveDate:
+ ```java
+ FileLayout layout = new FixedWidthFileLayout()
+       .readEditor(LocalDate.class, new LocalDateEditor("yyyy-MM-dd"))
+     .record(MockRecord.class)
+         .column("favoriteYear", 1, 3, Format.YYYY)
+         .column("birthMonth", 4, 9, Format.YYYYMM)
+         .column("effectiveDate", 10, 19)
+     .build();
+ ``` 
+The ItemReader will convert the values in the file to LocalDate objects using defaults for the missing values. So, if 
+the first 4 columns of the file ar '2019', the favoriteYear property on the resulting bean will be January 1, 2019. 
+The ItemWriter will write that bean's favoriteYear property to the first 4 columns of the file as '2019'.
+
 # Usage
 
 ## Maven Dependency
