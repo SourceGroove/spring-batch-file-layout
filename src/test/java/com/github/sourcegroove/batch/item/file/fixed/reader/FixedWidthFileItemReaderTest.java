@@ -15,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.item.file.FlatFileParseException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +29,24 @@ public class FixedWidthFileItemReaderTest {
     private static final String SAMPLE_REFORMAT_FILE = "date-reformat-file.txt";
     private static final String SAMPLE_FIXED_MULTIPLE_TYPES = "sample-file-record-types.txt";
 
+    @Test(expected = FlatFileParseException.class)
+    public void givenLayoutWithUnknownPropertyWhenReadThenError() throws Exception {
+        Layout layout = new FixedWidthLayout()
+                .record(MockDateRecord.class)
+                .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .column("type", 1, 3)
+                .column("badProperty", 4, 7, Format.YYYY)
+                .column("month", 8, 13, Format.YYYYMM)
+                .column("day", 14, 21, Format.YYYYMMDD)
+                .layout();
+
+        log.info(layout);
+
+        LayoutItemReader<MockDateRecord> reader = layout.getItemReader();
+        reader.setResource(MockFactory.getResource(SAMPLE_REFORMAT_FILE));
+        reader.open(new ExecutionContext());
+        MockDateRecord record = reader.read();
+    }
 
     @Test
     public void givenLayoutWithDifferentFormatsWhenReadThanRead() throws Exception {
@@ -134,5 +153,6 @@ public class FixedWidthFileItemReaderTest {
         MockFactory.assertSystemAdminRole((MockRoleRecord) reader.read());
         MockFactory.assertUserRole((MockRoleRecord) reader.read());
     }
+
 
 }

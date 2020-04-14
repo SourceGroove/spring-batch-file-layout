@@ -27,6 +27,7 @@ import java.util.Map;
  */
 public class FixedWidthFormatFieldSetMapper<T> implements FieldSetMapper<T>, InitializingBean {
     protected static final Log log = LogFactory.getLog(FixedWidthFormatFieldSetMapper.class);
+    private Class<? extends T> targetType;
     private String[] names;
     private Map<Class<?>, PropertyEditor> customEditors;
     private Format[] formats;
@@ -48,6 +49,7 @@ public class FixedWidthFormatFieldSetMapper<T> implements FieldSetMapper<T>, Ini
         this.formatter.editors(customEditors);
     }
     public void setTargetType(Class<? extends T> type) {
+        this.targetType = type;
         this.createBeanWrapper(type);
         this.delegate.setTargetType(type);
     }
@@ -82,6 +84,9 @@ public class FixedWidthFormatFieldSetMapper<T> implements FieldSetMapper<T>, Ini
             if(!StringUtils.equalsIgnoreCase(name, FixedWidthPropertyFormatter.NON_FIELD_PROPERTY)) {
                 names.add(name);
                 Class type = this.beanWrapper.getPropertyType(name);
+                if(type == null){
+                    throw new IllegalArgumentException("Property '" +  name + "' not found on  " + this.targetType);
+                }
                 values.add(formatter.formatForRead(name, type, value));
             }
         }

@@ -76,7 +76,7 @@ public class FixedWidthPropertyFormatter {
             throw new IllegalArgumentException("Property name required");
         }
         if (propertyType == null) {
-            throw new IllegalArgumentException("Unable to find type for property " + propertyName);
+            throw new IllegalArgumentException("Property  type required for " + propertyName);
         }
 
         Format format = getFormat(propertyName);
