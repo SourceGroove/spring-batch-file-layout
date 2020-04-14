@@ -96,6 +96,10 @@ public class FixedWidthRecordLayout {
         return this.columnRanges.toArray(new Range[this.columnRanges.size()]);
     }
 
+    public int getLineLength(){
+        return CollectionUtils.isEmpty(this.columnRanges) ? 0 : 
+                this.columnRanges.get(this.columnRanges.size() - 1).getMax();
+    }
     public String[] getColumns() {
         return this.columns.toArray(new String[this.columns.size()]);
     }
@@ -203,23 +207,18 @@ public class FixedWidthRecordLayout {
                 .append(".").append(recordType.name().toLowerCase())
                 .append("(").append(this.getTargetType().getSimpleName()).append(".class, \"").append(this.getPrefix()).append("\")\n")
                 .append("    //.format(\"").append(this.getFormat()).append("\")\n");
+
         for (int i = 0; i < this.columns.size(); i++) {
-            Format fmt = this.columnFormats.get(i);
             String name = this.columns.get(i);
             Range range = this.columnRanges.get(i);
-            boolean lastColumn = i == this.columns.size() - 1;
+            Format fmt = this.columnFormats.get(i);
 
-            if(fmt == Format.STRING) {
-                str.append("    .column(\"").append(name).append("\", ").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
-            } else {
-                str.append("    .column(\"")
-                        .append(name).append("\", ")
-                        .append(range.getMin()).append(", ")
-                        .append(range.getMax())
-                        .append(", ").append("Format.").append(fmt)
-                        .append(")\n");
-            }
-
+            str.append("    .column(\"")
+                    .append(name).append("\", ")
+                    .append(range.getMin()).append(", ")
+                    .append(range.getMax())
+                    .append(", ").append("Format.").append(fmt)
+                    .append(")\n");
         }
         return str.toString();
     }

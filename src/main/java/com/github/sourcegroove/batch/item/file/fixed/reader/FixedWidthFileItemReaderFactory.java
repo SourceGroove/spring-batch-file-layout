@@ -8,6 +8,7 @@ import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
+import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
@@ -37,7 +38,10 @@ public class FixedWidthFileItemReaderFactory {
             fieldSetMapper.setCustomEditors(editors);
             mappers.put(record.getPrefix(), fieldSetMapper);
 
-            log.debug("Added " + record.getRecordType() + " layout with prefix " + record.getPrefix() + " to reader");
+            log.debug("Added " + record.getRecordType() 
+                    + " layout with prefix='" + record.getPrefix()
+                    + "', line length=" + record.getLineLength()
+                    + " to reader");
 
         }
 

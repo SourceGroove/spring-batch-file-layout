@@ -26,9 +26,33 @@ import static junit.framework.TestCase.assertEquals;
 
 public class FixedWidthFileItemReaderTest {
     protected static final Log log = LogFactory.getLog(FixedWidthFileItemReaderTest.class);
+    private static final String DATE_RECORDS_TRAILING_FILLER = "date-records-trailing-filler.txt";
     private static final String SAMPLE_REFORMAT_FILE = "date-reformat-file.txt";
     private static final String SAMPLE_FIXED_MULTIPLE_TYPES = "sample-file-record-types.txt";
 
+    @Test
+    public void givenLayoutWithTrailingFillerWhenReadThenRead() throws Exception {
+        int length = 31;
+        Layout layout = new FixedWidthLayout()
+                .record(MockDateRecord.class)
+                .readEditor(LocalDate.class, new LocalDateEditor("yyyyMMdd"))
+                .column("type", 1, 3)
+                .column("year", 4, 7, Format.YYYY)
+                .column("month", 8, 13, Format.YYYYMM)
+                .column("day", 14, 21, Format.YYYYMMDD)
+                .column(22, length)
+                .layout();
+
+        log.info(layout);
+
+        LayoutItemReader<MockDateRecord> reader = layout.getItemReader();
+        reader.setResource(MockFactory.getResource(DATE_RECORDS_TRAILING_FILLER));
+        reader.open(new ExecutionContext());
+        MockDateRecord record1 = reader.read();
+        MockDateRecord record2 = reader.read();
+        MockDateRecord record3 = reader.read();
+
+    }
     @Test(expected = FlatFileParseException.class)
     public void givenLayoutWithUnknownPropertyWhenReadThenError() throws Exception {
         Layout layout = new FixedWidthLayout()
