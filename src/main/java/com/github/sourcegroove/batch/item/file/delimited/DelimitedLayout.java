@@ -1,13 +1,9 @@
 package com.github.sourcegroove.batch.item.file.delimited;
 
+import com.github.sourcegroove.batch.item.file.Layout;
 import com.github.sourcegroove.batch.item.file.delimited.reader.DelimitedFileItemReader;
 import com.github.sourcegroove.batch.item.file.delimited.writer.DelimitedFileItemWriter;
-import com.github.sourcegroove.batch.item.file.editor.DateEditor;
-import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthBeanWrapperFieldExtractor;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
-import com.github.sourcegroove.batch.item.file.Layout;
+import com.github.sourcegroove.batch.item.file.editor.EditorFactory;
 import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthDelegatingFieldExtractor;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -16,10 +12,9 @@ import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 
 import java.beans.PropertyEditor;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class DelimitedLayout implements Layout {
     private int linesToSkip = 0;
@@ -27,14 +22,17 @@ public class DelimitedLayout implements Layout {
     private String delimiter = ",";
     private Class targetType;
     private List<String> columns = new ArrayList<>();
-    private Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+    private Map<Class<?>, PropertyEditor> editors;
 
     public DelimitedLayout(){
-        this.editor(LocalDate.class, new LocalDateEditor());
-        this.editor(LocalDateTime.class, new LocalDateTimeEditor());
-        this.editor(OffsetDateTime.class, new OffsetDateTimeEditor());
-        this.editor(Date.class, new DateEditor());
+        this.editors = EditorFactory.getDefaultEditors();
     }
+
+    public DelimitedLayout dateFormat(String dateFormat) {
+        this.editors = EditorFactory.getDefaultEditors(dateFormat);
+        return this;
+    }
+
 
     public DelimitedLayout linesToSkip(int linesToSkip) {
         this.linesToSkip = linesToSkip;
@@ -109,4 +107,6 @@ public class DelimitedLayout implements Layout {
     private String[] getColumns(){
         return this.columns.toArray(new String[this.columns.size()]);
     }
+
+
 }

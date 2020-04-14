@@ -1,10 +1,7 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
 import com.github.sourcegroove.batch.item.file.Layout;
-import com.github.sourcegroove.batch.item.file.editor.DateEditor;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateTimeEditor;
-import com.github.sourcegroove.batch.item.file.editor.OffsetDateTimeEditor;
+import com.github.sourcegroove.batch.item.file.editor.*;
 import com.github.sourcegroove.batch.item.file.fixed.reader.FixedWidthFileItemReader;
 import com.github.sourcegroove.batch.item.file.fixed.reader.FixedWidthFileItemReaderFactory;
 import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileItemWriter;
@@ -26,23 +23,13 @@ public class FixedWidthLayout implements Layout {
     private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
     private List<FixedWidthRecordLayout> records = new ArrayList<>();
-    
-    public FixedWidthLayout(){
+
+    public FixedWidthLayout dateFormat(String dateFormat) {
+        this.readEditors.putAll(EditorFactory.getDefaultEditors(dateFormat));
+        this.writeEditors.putAll(EditorFactory.getDefaultEditors(dateFormat));
+        return this;
     }
 
-    public FixedWidthLayout defaultEditors(){
-        this.readEditors.putAll(getDefaultEditors());
-        this.writeEditors.putAll(getDefaultEditors());
-        return this;
-    }
-    public FixedWidthLayout defaultReadEditors(){
-        this.readEditors.putAll(getDefaultEditors());
-        return this;
-    }
-    public FixedWidthLayout defaultWriteEditors(){
-        this.writeEditors.putAll(getDefaultEditors());
-        return this;
-    }
     public FixedWidthLayout linesToSkip(int linesToSkip) {
         this.linesToSkip = linesToSkip;
         return this;
@@ -52,10 +39,10 @@ public class FixedWidthLayout implements Layout {
      * Setting this to true will cause the FixedWidthFormatBuilder to create a
      * line format using all strings (no printf decimals - %2d, etc)
      * and the FixedWidthFileFieldExtract to extract values as Strings.
-     * 
+     *
      * This allows you to pass null objects to those formats that would otherwise cause
      * an exception - i.e. a null Double sent to %2f
-     * 
+     *
      * Basically - it's safer... and therefore is the default
      */
     public FixedWidthLayout writeAsStrings(boolean writeAsStrings) {
@@ -68,19 +55,21 @@ public class FixedWidthLayout implements Layout {
         this.writeEditors.put(clazz, editor);
         return this;
     }
+
     public FixedWidthLayout readEditor(Class clazz, PropertyEditor editor) {
         this.readEditors.put(clazz, editor);
         return this;
     }
+
     public FixedWidthLayout writeEditor(Class clazz, PropertyEditor editor) {
         this.writeEditors.put(clazz, editor);
         return this;
     }
-    
+
     public FixedWidthRecordLayout footer(Class targetType) {
         return footer(targetType);
     }
-    
+
     public FixedWidthRecordLayout footer(Class targetType, String prefix) {
         if (this.getFooterLayout() != null) {
             throw new IllegalArgumentException("Footer already defined");
@@ -100,34 +89,44 @@ public class FixedWidthLayout implements Layout {
     }
 
     public FixedWidthRecordLayout record(Class targetType) {
-        return record(targetType, FixedWidthRecordLayout.RecordType.RECORD, null);
+        return record(targetType, FixedWidthRecordLayout.RecordType.DETAIL, null);
     }
 
     public FixedWidthRecordLayout record(Class targetType, String prefix) {
-        return record(targetType, FixedWidthRecordLayout.RecordType.RECORD, prefix);
+        return record(targetType, FixedWidthRecordLayout.RecordType.DETAIL, prefix);
     }
 
     public boolean isWriteAsStrings() {
         return this.writeAsStrings;
     }
-    public int getLinesToSkip(){
+
+    public int getLinesToSkip() {
         return this.linesToSkip;
     }
-    public Map<Class<?>, PropertyEditor> getReadEditors(){
+
+    public Map<Class<?>, PropertyEditor> getReadEditors() {
         return this.readEditors;
     }
-    public Map<Class<?>, PropertyEditor> getWriteEditors(){
+
+    public Map<Class<?>, PropertyEditor> getWriteEditors() {
         return this.writeEditors;
     }
+
     public FixedWidthFileItemWriter getItemWriter() {
         return FixedWidthFileItemWriterFactory.getItemWriter(this);
     }
+
     public FixedWidthFileItemReader getItemReader() {
         return FixedWidthFileItemReaderFactory.getItemReader(this);
     }
+
     public List<FixedWidthRecordLayout> getRecordLayouts() {
+        return this.records;
+    }
+
+    public List<FixedWidthRecordLayout> getDetailLayouts() {
         return this.records.stream()
-                .filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.RECORD)
+                .filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.DETAIL)
                 .collect(Collectors.toList());
     }
 
@@ -145,15 +144,6 @@ public class FixedWidthLayout implements Layout {
                 .orElse(null);
     }
 
-    public Map<Class<?>, PropertyEditor> getDefaultEditors(){
-        Map<Class<?>, PropertyEditor> map = new HashMap<>();
-        map.put(LocalDate.class, new LocalDateEditor());
-        map.put(LocalDateTime.class, new LocalDateTimeEditor());
-        map.put(OffsetDateTime.class, new OffsetDateTimeEditor());
-        map.put(Date.class, new DateEditor());
-        return map;
-    }
-
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder("FixedWidthLayout:\n")
@@ -165,7 +155,7 @@ public class FixedWidthLayout implements Layout {
         return str.toString();
     }
 
-    
+
     private FixedWidthRecordLayout record(Class targetType, FixedWidthRecordLayout.RecordType recordType, String prefix) {
         FixedWidthRecordLayout record = new FixedWidthRecordLayout(targetType, this);
         if (recordType != null) {
@@ -178,6 +168,5 @@ public class FixedWidthLayout implements Layout {
         return this.records.get(this.records.size() - 1);
     }
 
-   
 
 }

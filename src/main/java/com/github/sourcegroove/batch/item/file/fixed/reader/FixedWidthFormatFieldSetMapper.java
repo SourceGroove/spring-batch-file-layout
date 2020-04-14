@@ -2,6 +2,7 @@ package com.github.sourcegroove.batch.item.file.fixed.reader;
 
 import com.github.sourcegroove.batch.item.file.fixed.FixedWidthPropertyFormatter;
 import com.github.sourcegroove.batch.item.file.fixed.Format;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -15,7 +16,9 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.BindException;
 
 import java.beans.PropertyEditor;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,17 +31,17 @@ public class FixedWidthFormatFieldSetMapper<T> implements FieldSetMapper<T>, Ini
     private Map<Class<?>, PropertyEditor> customEditors;
     private Format[] formats;
     private BeanWrapperImpl beanWrapper;
-    
+
     private FixedWidthPropertyFormatter formatter;
     private BeanWrapperFieldSetMapper<T> delegate;
-    
+
     public FixedWidthFormatFieldSetMapper(){
         this.formatter = new FixedWidthPropertyFormatter();
         this.delegate = new BeanWrapperFieldSetMapper<T>();
         this.delegate.setDistanceLimit(0);
         this.delegate.setStrict(false);
     }
-    
+
     public void setCustomEditors(Map<Class<?>, PropertyEditor> customEditors) {
         this.customEditors = customEditors;
         this.delegate.setCustomEditors(this.customEditors);
@@ -63,32 +66,28 @@ public class FixedWidthFormatFieldSetMapper<T> implements FieldSetMapper<T>, Ini
         this.delegate.afterPropertiesSet();
         this.formatter.afterPropertiesSet();
     }
-    
+
     @Override
     public T mapFieldSet(FieldSet fieldSet) throws BindException {
-        if(this.formats != null && this.formats.length > 0) {
-            log.trace("Reformatting fieldset using field level formats...");
-            FieldSet reformatted = reformat(fieldSet);
-            return delegate.mapFieldSet(reformatted);
-        } else {
-            return delegate.mapFieldSet(fieldSet);
-        }
+        FieldSet reformatted = reformat(fieldSet);
+        return delegate.mapFieldSet(reformatted);
     }
 
     public FieldSet reformat(FieldSet fieldSet){
-        String[] names = new String[fieldSet.getNames().length];
-        String[] values = new String[fieldSet.getValues().length];
+        List<String> names = new ArrayList<>();
+        List<String> values = new ArrayList<>();
         for(int i = 0; i < fieldSet.getFieldCount(); i++){
             String name = fieldSet.getNames()[i];
             String value = fieldSet.getValues()[i];
-            names[i] = name;
-            
-            Class type = this.beanWrapper.getPropertyType(name);
-            values[i] = formatter.formatForRead(name, type, value);
+            if(!StringUtils.equalsIgnoreCase(name, FixedWidthPropertyFormatter.NON_FIELD_PROPERTY)) {
+                names.add(name);
+                Class type = this.beanWrapper.getPropertyType(name);
+                values.add(formatter.formatForRead(name, type, value));
+            }
         }
-        return new DefaultFieldSet(values, names);
+        return new DefaultFieldSet(values.toArray(new String[values.size()]), names.toArray(new String[names.size()]));
     }
-    
+
     private void createBeanWrapper(Class<? extends T> type){
         try {
             this.beanWrapper = new BeanWrapperImpl(type.newInstance());

@@ -2,8 +2,6 @@ package com.github.sourcegroove.batch.item.file.fixed;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
@@ -15,12 +13,11 @@ import java.util.stream.Collectors;
 
 public class FixedWidthRecordLayout {
     public enum RecordType {
-        RECORD,
+        DETAIL,
         HEADER,
         FOOTER
     }
-    private static final String NON_FIELD_COLUMN = "__FILLER__";
-    private final Log log = LogFactory.getLog(getClass());
+
     private FixedWidthLayout fileLayout;
     private Class targetType;
     private String prefix = "*";
@@ -34,7 +31,7 @@ public class FixedWidthRecordLayout {
     private List<Format> columnFormats = new ArrayList<>();
 
     public FixedWidthRecordLayout(Class targetType, FixedWidthLayout fileLayout) {
-        this.recordType = RecordType.RECORD;
+        this.recordType = RecordType.DETAIL;
         this.targetType = targetType;
         this.fileLayout = fileLayout;
         this.strict = true;
@@ -98,20 +95,24 @@ public class FixedWidthRecordLayout {
     public Range[] getColumnRanges() {
         return this.columnRanges.toArray(new Range[this.columnRanges.size()]);
     }
-    
+
     public String[] getColumns() {
         return this.columns.toArray(new String[this.columns.size()]);
     }
+    public Format[] getColumnFormats() {
+        return this.columnFormats.toArray(new Format[columnFormats.size()]);
+    }
+
     public String[] getMappableColumns() {
         List<String> mappable = this.columns.stream()
-                .filter(c -> !StringUtils.equals(c, NON_FIELD_COLUMN))
+                .filter(c -> !StringUtils.equals(c, FixedWidthPropertyFormatter.NON_FIELD_PROPERTY))
                 .collect(Collectors.toList());
         return mappable.toArray(new String[mappable.size()]);
     }
     public Range[] getMappableColumnRanges() {
         List<Range> ranges = new ArrayList<>();
         for (int i = 0; i < this.columns.size(); i++) {
-            if(!StringUtils.equals(this.columns.get(i), NON_FIELD_COLUMN)){
+            if(!StringUtils.equals(this.columns.get(i), FixedWidthPropertyFormatter.NON_FIELD_PROPERTY)){
                 ranges.add(this.columnRanges.get(i));
             }
         }
@@ -120,7 +121,7 @@ public class FixedWidthRecordLayout {
     public Format[] getMappableColumnFormats() {
         List<Format> formats = new ArrayList<>();
         for (int i = 0; i < this.columns.size(); i++) {
-            if(!StringUtils.equals(this.columns.get(i), NON_FIELD_COLUMN)){
+            if(!StringUtils.equals(this.columns.get(i), FixedWidthPropertyFormatter.NON_FIELD_PROPERTY)){
                 formats.add(this.columnFormats.get(i));
             }
         }
@@ -129,14 +130,14 @@ public class FixedWidthRecordLayout {
 
     //filler and constant columns (non-mappable)
     public FixedWidthRecordLayout column(int start, int end) {
-        return column(NON_FIELD_COLUMN, new Range(start, end), Format.FILLER, null);
+        return column(FixedWidthPropertyFormatter.NON_FIELD_PROPERTY, new Range(start, end), Format.FILLER, null);
     }
     public FixedWidthRecordLayout column(int width, String value) {
-        return column(NON_FIELD_COLUMN, getRange(width), Format.FILLER, value);
+        return column(FixedWidthPropertyFormatter.NON_FIELD_PROPERTY, getRange(width), Format.FILLER, value);
     }
     public FixedWidthRecordLayout column(int start, int end, String value) {
         Range range = new Range(start, end);
-        return column(NON_FIELD_COLUMN, range, null, value);
+        return column(FixedWidthPropertyFormatter.NON_FIELD_PROPERTY, range, null, value);
     }
 
     // Field mappable columns
@@ -207,13 +208,8 @@ public class FixedWidthRecordLayout {
             String name = this.columns.get(i);
             Range range = this.columnRanges.get(i);
             boolean lastColumn = i == this.columns.size() - 1;
-            
-            if(name == NON_FIELD_COLUMN &&  fmt == Format.FILLER){
-                //include the last because we need to have the trailing column so the line length is represented correctly
-                if(lastColumn) {
-                    str.append("    .column(").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
-                }
-            } else if(fmt == Format.STRING) {
+
+            if(fmt == Format.STRING) {
                 str.append("    .column(\"").append(name).append("\", ").append(range.getMin()).append(", ").append(range.getMax()).append(")\n");
             } else {
                 str.append("    .column(\"")
@@ -223,7 +219,7 @@ public class FixedWidthRecordLayout {
                         .append(", ").append("Format.").append(fmt)
                         .append(")\n");
             }
-            
+
         }
         return str.toString();
     }

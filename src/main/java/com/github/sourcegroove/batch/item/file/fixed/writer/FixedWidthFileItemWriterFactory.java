@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FixedWidthFileItemWriterFactory {
-    
+
     public static FixedWidthFileItemWriter getItemWriter(FixedWidthLayout file) {
         FixedWidthFileItemWriter writer = new FixedWidthFileItemWriter();
-        for (FixedWidthRecordLayout record : file.getRecordLayouts()) {
+        for (FixedWidthRecordLayout record : file.getDetailLayouts()) {
             writer.setLineAggregator(record.getTargetType(), getLineAggregator(file, record));
         }
         if (file.getHeaderLayout() != null) {
@@ -25,12 +25,12 @@ public class FixedWidthFileItemWriterFactory {
         }
         return writer;
     }
-    
+
     private static LineAggregator getLineAggregator(FixedWidthLayout file, FixedWidthRecordLayout record) {
         Map<Class<?>, PropertyEditor> editors = new HashMap<>();
         editors.putAll(file.getWriteEditors());
         editors.putAll(record.getWriteEditors());
-        
+
         FormatterLineAggregator aggregator = new FormatterLineAggregator();
         aggregator.setFormat(record.getFormat());
         if(file.isWriteAsStrings()) {
