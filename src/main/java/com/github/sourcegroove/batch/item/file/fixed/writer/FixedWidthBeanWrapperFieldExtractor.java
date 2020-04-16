@@ -6,6 +6,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.transform.FieldExtractor;
+import org.springframework.batch.item.file.transform.Range;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.InitializingBean;
@@ -22,6 +23,7 @@ public class FixedWidthBeanWrapperFieldExtractor<T> implements FieldExtractor<T>
     private Map<Class<?>, PropertyEditor> customEditors;
     private List<Format> formats;
     private List<String> names;
+    private List<Range> ranges;
     
     public void setCustomEditors(Map<Class<?>, PropertyEditor> customEditors) {
         this.customEditors = customEditors;
@@ -35,7 +37,9 @@ public class FixedWidthBeanWrapperFieldExtractor<T> implements FieldExtractor<T>
         Assert.notNull(names, "Names must be non-null");
         this.names = Arrays.asList(names);
     }
-
+    public void setRanges(Range[] ranges) {
+        this.ranges = Arrays.asList(ranges);
+    }
     public void afterPropertiesSet() {
         Assert.notNull(this.names, "The 'names' property must be set.");
         Assert.isTrue(CollectionUtils.isEmpty(this.formats) || this.formats.size() == this.names.size(), "The 'formats' size must match 'names' size.");
@@ -45,6 +49,7 @@ public class FixedWidthBeanWrapperFieldExtractor<T> implements FieldExtractor<T>
         formatter.names(this.names);
         formatter.editors(this.customEditors);
         formatter.formats(this.formats);
+        formatter.ranges(this.ranges);
         BeanWrapper bw = new BeanWrapperImpl(item);
         List<Object> values = this.names.stream()
                 .map(name -> formatter.formatForWrite(name, bw.getPropertyValue(name)))

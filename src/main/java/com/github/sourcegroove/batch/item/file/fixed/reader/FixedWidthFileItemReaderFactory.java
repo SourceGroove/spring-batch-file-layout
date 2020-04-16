@@ -2,6 +2,7 @@ package com.github.sourcegroove.batch.item.file.fixed.reader;
 
 import com.github.sourcegroove.batch.item.file.fixed.FixedWidthLayout;
 import com.github.sourcegroove.batch.item.file.fixed.FixedWidthRecordLayout;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -9,6 +10,7 @@ import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineM
 import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
 import org.springframework.batch.item.file.transform.LineTokenizer;
 import org.springframework.batch.item.file.transform.Range;
+import sun.reflect.Reflection;
 
 import java.beans.PropertyEditor;
 import java.util.HashMap;
@@ -19,12 +21,12 @@ public class FixedWidthFileItemReaderFactory {
     public static FixedWidthFileItemReader getItemReader(FixedWidthLayout file) {
         Map<String, FieldSetMapper> mappers = new HashMap<>();
         Map<String, LineTokenizer> tokenizers = new HashMap<>();
-
+        
         for (FixedWidthRecordLayout record : file.getRecordLayouts()) {
             Map<Class<?>, PropertyEditor> editors = new HashMap<>();
             editors.putAll(file.getReadEditors());
             editors.putAll(record.getReadEditors());
-
+            
             FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
             tokenizer.setStrict(record.isStrict());
             tokenizer.setNames(record.getColumns());

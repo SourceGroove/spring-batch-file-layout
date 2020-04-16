@@ -1,13 +1,24 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
 import org.junit.Test;
+import org.springframework.batch.item.file.transform.Range;
 
+import java.text.NumberFormat;
 import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
 
 public class FixedWidthLineFormatBuilderTest {
 
+    @Test
+    public void givenNumberWhenFormatThenPadded(){
+        String format = new FixedWidthLineFormatBuilder()
+                .append(new Range(1, 10), Format.INTEGER, null)
+                .toString();
+
+        
+        assertEquals("0000000001", String.format(format, 1));
+    }
     @Test
     public void givenStringBasedZDFormatWhenFormatThenCorrectFormat(){
         String format = new FixedWidthLineFormatBuilder()
@@ -20,17 +31,6 @@ public class FixedWidthLineFormatBuilderTest {
         assertEquals("6         ", line);
     }
 
-    @Test
-    public void givenStringBasedDecimalFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder()
-                .append(1, 10, Format.DECIMAL)
-                .build();
-
-        assertEquals("%10.10s", format);
-        String line = String.format(format, 6);
-        assertEquals(10, line.length());
-        assertEquals("         6", line);
-    }
     
     @Test
     public void givenZDFormatWhenFormatThenCorrectFormat(){

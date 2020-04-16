@@ -4,6 +4,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.batch.item.file.transform.Range;
 import org.springframework.util.Assert;
 
 import java.beans.PropertyEditor;
@@ -28,7 +29,13 @@ public class FixedWidthPropertyFormatter {
     private static final String EMPTY_STRING = "";
     private List<String> names;
     private List<Format> formats;
+    private List<Range> ranges;
     private Map<Class<?>, PropertyEditor> editors;
+
+    public FixedWidthPropertyFormatter ranges(List<Range> ranges) {
+        this.ranges = ranges;
+        return this;
+    }
 
     public FixedWidthPropertyFormatter names(List<String> names) {
         this.names = names;
@@ -51,25 +58,33 @@ public class FixedWidthPropertyFormatter {
                 "The 'formats' size must match 'names' size.");
     }
 
-    public String formatForWrite(String propertyName, Object propertyValue) {
-        if (StringUtils.isBlank(propertyName) || propertyValue == null) {
+    public Object formatForWrite(String propertyName, Object propertyValue) {
+        if (StringUtils.isBlank(propertyName)) {
             return EMPTY_STRING;
+        } else if (propertyValue == null) {
+            return getNullValue(propertyName);
         }
 
-        String formattedValue = formatObject(getFormat(propertyName), propertyValue);
+        Object formattedValue = formatWithFormatter(propertyName, propertyValue);
         if (formattedValue != null) {
+            log.debug("Reformatted property " + propertyName + " of type " + propertyValue.getClass() + " and value " + propertyValue 
+                + " to " + formattedValue + " using Format");
             return formattedValue;
         }
 
-        formattedValue = formatObject(getEditor(propertyValue.getClass()), propertyValue);
+        formattedValue = formatWithEditor(propertyValue);
         if (formattedValue != null) {
+            log.debug("Reformatted property " + propertyName + " of type " + propertyValue.getClass() + " and value " + propertyValue
+                    + " to " + formattedValue + " using Editor");
             return formattedValue;
         }
-        return propertyValue != null ? propertyValue.toString() : EMPTY_STRING;
+        
+        return propertyValue != null ? propertyValue : getNullValue(propertyName);
     }
 
-    public String formatForRead(String propertyName, Class propertyType, String stringValue){
-        if(StringUtils.isBlank(stringValue)){
+    public String formatForRead(String propertyName, Class propertyType, String stringValue) {
+        log.debug("Formatting property " + propertyName + " of type " + propertyType + " and value " + stringValue);
+        if (StringUtils.isBlank(stringValue)) {
             return stringValue;
         }
         if (StringUtils.isBlank(propertyName)) {
@@ -80,27 +95,26 @@ public class FixedWidthPropertyFormatter {
         }
 
         Format format = getFormat(propertyName);
-
         //right now we are only reformatting date fields on read
-        if(format == null || !format.isDateFormat()){
-            return  stringValue;
+        if (format == null || !format.isDateFormat()) {
+            return stringValue;
         }
 
         DateTimeFormatter df = getDateFormatter(format);
         TemporalAccessor temporal = df.parse(stringValue);
         PropertyEditor editor = getEditor(propertyType);
-        if(editor == null) {
+        if (editor == null) {
             return df.format(temporal);
         }
 
         Object obj = stringValue;
-        if(propertyType == Date.class){
+        if (propertyType == Date.class) {
             obj = Timestamp.valueOf(LocalDateTime.from(temporal));
 
-        } else if (propertyType ==  LocalDateTime.class){
+        } else if (propertyType == LocalDateTime.class) {
             obj = LocalDateTime.from(temporal);
 
-        } else if (propertyType == LocalDate.class){
+        } else if (propertyType == LocalDate.class) {
             obj = LocalDate.from(temporal);
         }
 
@@ -109,8 +123,11 @@ public class FixedWidthPropertyFormatter {
     }
 
 
-    private String formatObject(Format format, Object value) {
-        if (format == null || !format.hasPattern()) {
+    private Object formatWithFormatter(String propertyName, Object value) {
+        int index = this.names.indexOf(propertyName);
+        Format format = this.formats != null ? this.formats.get(index) : null;
+        
+        if (format == null || !format.isDateFormat()) {
             return null;
 
         } else if (format.isDateFormat() && value instanceof Date) {
@@ -121,21 +138,40 @@ public class FixedWidthPropertyFormatter {
 
         } else if (format.isDateFormat() && value instanceof String) {
             DateTimeFormatter df = getDateFormatter(format);
-            return getDateFormatter(format).format(df.parse((String)value));
-
-        } else if (format == Format.DECIMAL) {
-            return new DecimalFormat(format.getPattern()).format(value);
+            return getDateFormatter(format).format(df.parse((String) value));
 
         } else {
             return null;
         }
     }
-    private String formatObject(PropertyEditor editor, Object value) {
+
+    private Object formatWithEditor(Object value) {
+        if (value == null) {
+            return null;
+        }
+        PropertyEditor editor = getEditor(value.getClass());
         if (editor == null) {
             return null;
         }
         editor.setValue(value);
         return editor.getAsText();
+    }
+
+    private Object getNullValue(String propertyName) {
+        Format format = getFormat(propertyName);
+        if(format != null && format.isNumberFormat()){
+            return format == Format.DECIMAL ? 0.0 : 0;
+        } else {
+            return EMPTY_STRING;
+        }
+    }
+
+    private PropertyEditor getEditor(Class propertyType) {
+        return editors != null ? editors.get(propertyType) : null;
+    }
+
+    private Format getFormat(String propertyName) {
+        return this.formats != null ? this.formats.get(this.names.indexOf(propertyName)) : null;
     }
 
     private DateTimeFormatter getDateFormatter(Format format) {
@@ -155,18 +191,6 @@ public class FixedWidthPropertyFormatter {
                 .parseDefaulting(ChronoField.MINUTE_OF_HOUR, 0)
                 .parseDefaulting(ChronoField.SECOND_OF_MINUTE, 0)
                 .toFormatter().withResolverStyle(ResolverStyle.SMART);
-    }
-
-    private PropertyEditor getEditor(Class<?> clazz) {
-        return editors != null ? editors.get(clazz) : null;
-    }
-    private Format getFormat(String propertyName) {
-        if(this.formats == null){
-            return null;
-        }
-        int index = this.names.indexOf(propertyName);
-        Format format = this.formats.get(index);
-        return format == null || !format.hasPattern() ? null : format;
     }
 
 }

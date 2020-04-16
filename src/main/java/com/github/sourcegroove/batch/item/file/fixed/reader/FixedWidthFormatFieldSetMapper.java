@@ -102,9 +102,5 @@ public class FixedWidthFormatFieldSetMapper<T> implements FieldSetMapper<T>, Ini
             throw new IllegalStateException("Unable to create bean of type " + type);
         }
     }
-    private void logFieldSet(FieldSet fieldSet){
-        for(int i = 0; i < fieldSet.getFieldCount(); i++){
-            log.debug("Field " + fieldSet.getNames()[i] + "=" + fieldSet.getValues()[i]);
-        }
-    }
+   
 }

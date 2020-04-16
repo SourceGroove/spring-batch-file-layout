@@ -23,6 +23,7 @@ import java.time.ZoneId;
 import java.util.Date;
 
 import static junit.framework.TestCase.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class FixedWidthFileItemReaderTest {
     protected static final Log log = LogFactory.getLog(FixedWidthFileItemReaderTest.class);
@@ -120,7 +121,7 @@ public class FixedWidthFileItemReaderTest {
 
     @Test
     public void givenLayoutAndEditorWithDifferentFormatsAndDateTypesWhenReadThanRead() throws Exception {
-        Layout layout = new FixedWidthLayout()
+        FixedWidthLayout layout = new FixedWidthLayout()
                 .record(MockDateRecord.class)
                 .readEditor(Date.class, new DateEditor("yyyy-MM-dd"))
                 .readEditor(LocalDate.class, new LocalDateEditor("MM/dd/yyyy"))
@@ -130,9 +131,9 @@ public class FixedWidthFileItemReaderTest {
                 .column("localDateField", 8, 13, Format.YYYYMM)
                 .column("localDateTimeField", 14, 21, Format.YYYYMMDD)
                 .layout();
-
+        
         log.info(layout);
-
+        
         LayoutItemReader<MockDateRecord> reader = layout.getItemReader();
         reader.setResource(MockFactory.getResource(SAMPLE_REFORMAT_FILE));
         reader.open(new ExecutionContext());

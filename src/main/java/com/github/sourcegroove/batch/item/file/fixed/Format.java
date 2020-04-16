@@ -6,9 +6,9 @@ public enum Format {
     STRING,
     STRING_LFET, // Left aligned string - same as STRING
     STRING_RIGHT, //Right aligned string
-    INTEGER,
+    INTEGER(),
     ZD, // left aligned number
-    DECIMAL("#.##"),
+    DECIMAL(),
     YYYYMMDD("yyyyMMdd"), //date
     YYYYMM("yyyyMM"), //date
     YYYY("yyyy"), //date
@@ -24,9 +24,6 @@ public enum Format {
         this.pattern = pattern;
     }
 
-    public boolean hasPattern(){
-        return StringUtils.isNotBlank(this.pattern);
-    }
     public String getPattern() {
         return this.pattern;
     }
@@ -36,7 +33,11 @@ public enum Format {
                 || this == Format.INTEGER
                 || this == Format.STRING_RIGHT;
     }
-
+    public boolean isNumberFormat() {
+        return this == Format.INTEGER
+                || this == Format.DECIMAL
+                || this == Format.ZD;
+    }
     public boolean isDateFormat() {
         return this == Format.YYYYMMDD
                 || this == Format.YYYYMM

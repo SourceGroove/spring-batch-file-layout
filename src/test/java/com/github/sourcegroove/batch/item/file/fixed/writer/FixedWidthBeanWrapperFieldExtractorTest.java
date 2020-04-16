@@ -18,6 +18,20 @@ import static org.junit.Assert.assertEquals;
 public class FixedWidthBeanWrapperFieldExtractorTest {
 
     @Test
+    public void givenFieldLevelNumberFormatAndNullCorrespondingValueWhenAggregateThenLine()  {
+        FixedWidthBeanWrapperFieldExtractor extractor = new FixedWidthBeanWrapperFieldExtractor();
+        extractor.setNames(new String[]{"username", "firstName", "lastName", "dateOfBirth", "age"});
+        extractor.setFormats(new Format[]{Format.STRING, Format.STRING, Format.STRING, Format.YYYYMMDD, Format.INTEGER});
+        extractor.afterPropertiesSet();
+        
+        MockUserRecord user = MockFactory.getNeo();
+        user.setAge(null);
+        
+        Object[] fields = extractor.extract(user);
+        assertEquals(0, fields[4]);
+    }
+    
+    @Test
     public void givenFieldLevelDateFormatAndNullCorrespondingValueWhenAggregateThenLine()  {
         FixedWidthBeanWrapperFieldExtractor extractor = new FixedWidthBeanWrapperFieldExtractor();
         extractor.setNames(new String[]{"username", "firstName", "lastName", "dateOfBirth"});

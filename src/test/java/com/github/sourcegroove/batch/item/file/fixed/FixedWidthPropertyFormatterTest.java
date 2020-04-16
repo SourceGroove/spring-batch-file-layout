@@ -7,6 +7,13 @@ import java.util.Arrays;
 import static junit.framework.TestCase.assertEquals;
 
 public class FixedWidthPropertyFormatterTest {
+    @Test
+    public void givenIntegerWhenReformatThenDateString(){
+        FixedWidthPropertyFormatter formatter = new FixedWidthPropertyFormatter();
+        formatter.names(Arrays.asList("age"));
+        formatter.formats(Arrays.asList(Format.INTEGER));
+        assertEquals(0, formatter.formatForWrite("age", null));
+    }
     
     @Test
     public void givenYYYYWhenReformatThenDateString(){

@@ -37,6 +37,7 @@ public class FixedWidthFileItemWriterFactory {
             FixedWidthBeanWrapperFieldExtractor fieldExtractor = new FixedWidthBeanWrapperFieldExtractor();
             fieldExtractor.setNames(record.getMappableColumns());
             fieldExtractor.setFormats(record.getMappableColumnFormats());
+            fieldExtractor.setRanges(record.getMappableColumnRanges());
             fieldExtractor.setCustomEditors(editors);
             aggregator.setFieldExtractor(fieldExtractor);
         } else {

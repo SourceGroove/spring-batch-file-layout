@@ -9,22 +9,32 @@ public class FixedWidthLineFormatBuilder {
 
     private static final Format DEFAULT_FORMAT = Format.STRING;
     private final Log log = LogFactory.getLog(getClass());
-    private boolean useStringBasedFormat;
+    private boolean acceptDateObjects;
     private int length = 0;
     private StringBuilder format = new StringBuilder();
 
     /*
-     * By default, this produces a printf string that assumes it's getting all String objects.
-     * This is done to avoid the errors when trying to handle null objects like Double or Integer
-     * when applied to something like '%0-4d'.  If you  want to have it create the pure printf
-     * formats (like d and f) set this to false, but be sure not to pass any nulls!
-     * param useStringBasedFormat creates a format that expects all params to be Strings
+     * This builder produces a printf string which will throw errors when trying to handle null objects like Date, Double, Integer.
+     * When Date objects are null and applied to something like '%tY%<tm%<td', an exception is thrown.  
+     * 
+     * Therefore, the default behavior for this builder is to treat date objects as pre formatted strings.
+     * 
+     * The below formats are assumed to be provided as pre formatted strings (not dates as they would imply)
+     * Format.YYYY
+     * Format.YYYYMMDD
+     * Format.YYYYMM
+     * Format.YYYY
+     * Format.MMYYYY
+     * 
+     * If you  want to have it create the pure printf, set the 'acceptDateObjects' parameter to 'true' and be sure not to pass any nulls!
+     *
+     * * param acceptDateObjects when true, creates a format that accepts Date objects, otherwise it expects a String
      */
-    public FixedWidthLineFormatBuilder(boolean useStringBasedFormat){
-        this.useStringBasedFormat = useStringBasedFormat;   
+    public FixedWidthLineFormatBuilder(boolean acceptDateObjects){
+        this.acceptDateObjects = acceptDateObjects;
     }
     public FixedWidthLineFormatBuilder(){
-        this.useStringBasedFormat = true;
+        this.acceptDateObjects = false;
     }
     
     
@@ -87,20 +97,33 @@ public class FixedWidthLineFormatBuilder {
     }
 
     private String getFormat(Format type, int width) {
-        return this.useStringBasedFormat ?
-                getFormatUsingAllStrings(type, width) :
-                getFormatUsingPureFormat(type, width);
+        return this.acceptDateObjects ?
+                getDatesAsStringFormat(type, width) :
+                getTrueFormat(type, width);
     }
-    private String getFormatUsingAllStrings(Format type, int width) {
+    private String getDatesAsStringFormat(Format type, int width) {
+        String fmt = null;
+        
         if (type == Format.FILLER) {
-            return StringUtils.rightPad(" ", width);
+            fmt = StringUtils.rightPad(" ", width);
+        } else if (type == Format.DECIMAL) {
+            fmt = "%0" + width + ".2f";
+
+        } else if (type == Format.INTEGER) {
+            fmt = "%0" + width + "d";
+
+        } else if (type == Format.ZD) {
+            fmt = "%-" + width + "." + width + "s";
+            
         } else {
             String flags = !type.isRightAligned() ? "-" : "";
-            return "%" + flags + width + "." + width + "s";
+            fmt = "%" + flags + width + "." + width + "s";
         }
         
+        return fmt;
     }
-    private String getFormatUsingPureFormat(Format type, int width) {
+    
+    private String getTrueFormat(Format type, int width) {
         String fmt = null;
         if (type == Format.FILLER) {
             fmt = StringUtils.rightPad(" ", width);
