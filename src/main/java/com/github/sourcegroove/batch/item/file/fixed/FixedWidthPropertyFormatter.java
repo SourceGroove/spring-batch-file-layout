@@ -159,8 +159,12 @@ public class FixedWidthPropertyFormatter {
 
     private Object getNullValue(String propertyName) {
         Format format = getFormat(propertyName);
-        if(format != null && format.isNumberFormat()){
-            return format == Format.DECIMAL ? 0.0 : 0;
+        if(format == null){
+            return EMPTY_STRING;
+        } if(format == Format.INTEGER) {
+            return 0;
+        } else if (format == Format.DECIMAL){
+            return 0.0;
         } else {
             return EMPTY_STRING;
         }
