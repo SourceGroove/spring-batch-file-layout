@@ -3,7 +3,7 @@ package com.github.sourcegroove.batch.item.file.fixed;
 import com.github.sourcegroove.batch.item.file.Layout;
 import com.github.sourcegroove.batch.item.file.LayoutItemReader;
 import com.github.sourcegroove.batch.item.file.LayoutItemWriter;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.format.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockRoleRecord;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;

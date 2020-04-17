@@ -1,5 +1,6 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
+import com.github.sourcegroove.batch.item.file.format.Format;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -98,8 +99,8 @@ public class FixedWidthLineFormatBuilder {
 
     private String getFormat(Format type, int width) {
         return this.acceptDateObjects ?
-                getDatesAsStringFormat(type, width) :
-                getTrueFormat(type, width);
+                getTrueFormat(type, width) :
+                getDatesAsStringFormat(type, width);
     }
     private String getDatesAsStringFormat(Format type, int width) {
         String fmt = null;

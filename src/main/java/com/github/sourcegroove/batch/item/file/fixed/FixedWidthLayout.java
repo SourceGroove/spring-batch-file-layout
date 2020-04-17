@@ -1,25 +1,27 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
 import com.github.sourcegroove.batch.item.file.Layout;
-import com.github.sourcegroove.batch.item.file.editor.*;
-import com.github.sourcegroove.batch.item.file.fixed.reader.FixedWidthFileItemReader;
-import com.github.sourcegroove.batch.item.file.fixed.reader.FixedWidthFileItemReaderFactory;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileItemWriter;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthFileItemWriterFactory;
+import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldExtractor;
+import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldSetMapper;
+import com.github.sourcegroove.batch.item.file.format.editor.EditorFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.batch.item.file.mapping.FieldSetMapper;
+import org.springframework.batch.item.file.mapping.PatternMatchingCompositeLineMapper;
+import org.springframework.batch.item.file.transform.FixedLengthTokenizer;
+import org.springframework.batch.item.file.transform.FormatterLineAggregator;
+import org.springframework.batch.item.file.transform.LineAggregator;
+import org.springframework.batch.item.file.transform.LineTokenizer;
 
 import java.beans.PropertyEditor;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FixedWidthLayout implements Layout {
     protected final Log log = LogFactory.getLog(getClass());
     private int linesToSkip = 0;
-    private boolean writeAsStrings = true;
     private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
     private List<FixedWidthRecordLayout> records = new ArrayList<>();
@@ -35,20 +37,6 @@ public class FixedWidthLayout implements Layout {
         return this;
     }
 
-    /*
-     * Setting this to true will cause the FixedWidthFormatBuilder to create a
-     * line format using all strings (no printf decimals - %2d, etc)
-     * and the FixedWidthFileFieldExtract to extract values as Strings.
-     *
-     * This allows you to pass null objects to those formats that would otherwise cause
-     * an exception - i.e. a null Double sent to %2f
-     *
-     * Basically - it's safer... and therefore is the default
-     */
-    public FixedWidthLayout writeAsStrings(boolean writeAsStrings) {
-        this.writeAsStrings = writeAsStrings;
-        return this;
-    }
 
     public FixedWidthLayout editor(Class clazz, PropertyEditor editor) {
         this.readEditors.put(clazz, editor);
@@ -69,22 +57,19 @@ public class FixedWidthLayout implements Layout {
     public FixedWidthRecordLayout footer(Class targetType) {
         return footer(targetType);
     }
-
     public FixedWidthRecordLayout footer(Class targetType, String prefix) {
-        if (this.getFooterLayout() != null) {
-            throw new IllegalArgumentException("Footer already defined");
-        }
+        this.records.stream().filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER)
+                .findFirst()
+                .ifPresent(r -> new IllegalArgumentException("Footer already defined"));
         return record(targetType, FixedWidthRecordLayout.RecordType.FOOTER, prefix);
     }
-
     public FixedWidthRecordLayout header(Class targetType) {
         return header(targetType, null);
     }
-
     public FixedWidthRecordLayout header(Class targetType, String prefix) {
-        if (this.getHeaderLayout() != null) {
-            throw new IllegalArgumentException("Header already defined");
-        }
+        this.records.stream().filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER)
+                .findFirst()
+                .ifPresent(r -> new IllegalArgumentException("Header already defined"));
         return record(targetType, FixedWidthRecordLayout.RecordType.HEADER, prefix);
     }
 
@@ -96,14 +81,6 @@ public class FixedWidthLayout implements Layout {
         return record(targetType, FixedWidthRecordLayout.RecordType.DETAIL, prefix);
     }
 
-    public boolean isWriteAsStrings() {
-        return this.writeAsStrings;
-    }
-
-    public int getLinesToSkip() {
-        return this.linesToSkip;
-    }
-
     public Map<Class<?>, PropertyEditor> getReadEditors() {
         return this.readEditors;
     }
@@ -112,37 +89,68 @@ public class FixedWidthLayout implements Layout {
         return this.writeEditors;
     }
 
+
     public FixedWidthFileItemWriter getItemWriter() {
-        return FixedWidthFileItemWriterFactory.getItemWriter(this);
+        FixedWidthFileItemWriter writer = new FixedWidthFileItemWriter();
+        for (FixedWidthRecordLayout record : this.records) {
+            LineAggregator aggregator = getLineAggregator(record);
+            if (record.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER) {
+                writer.setHeaderLineAggregator(aggregator);
+            } else if (record.getRecordType() == FixedWidthRecordLayout.RecordType.FOOTER) {
+                writer.setFooterLineAggregator(aggregator);
+            } else {
+                writer.setLineAggregator(record.getTargetType(), aggregator);
+            }
+        }
+        return writer;
+    }
+
+    private LineAggregator getLineAggregator(FixedWidthRecordLayout record) {
+        Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+        editors.putAll(this.getWriteEditors());
+        editors.putAll(record.getWriteEditors());
+        FormatterLineAggregator aggregator = new FormatterLineAggregator();
+        aggregator.setFormat(record.getFormat());
+        FormatAwareFieldExtractor fieldExtractor = new FormatAwareFieldExtractor<>();
+        fieldExtractor.setNames(record.getMappableColumns());
+        fieldExtractor.setFormats(record.getMappableColumnFormats());
+        fieldExtractor.setCustomEditors(editors);
+        aggregator.setFieldExtractor(fieldExtractor);
+        return aggregator;
     }
 
     public FixedWidthFileItemReader getItemReader() {
-        return FixedWidthFileItemReaderFactory.getItemReader(this);
+        Map<String, FieldSetMapper> mappers = new HashMap<>();
+        Map<String, LineTokenizer> tokenizers = new HashMap<>();
+        for (FixedWidthRecordLayout record : this.records) {
+            Map<Class<?>, PropertyEditor> editors = new HashMap<>();
+            editors.putAll(this.getReadEditors());
+            editors.putAll(record.getReadEditors());
+            FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
+            tokenizer.setStrict(record.isStrict());
+            tokenizer.setNames(record.getColumns());
+            tokenizer.setColumns(record.getColumnRanges());
+            tokenizers.put(record.getPrefix(), tokenizer);
+            
+            FormatAwareFieldSetMapper fieldSetMapper = new FormatAwareFieldSetMapper();
+            fieldSetMapper.setTargetType(record.getTargetType());
+            fieldSetMapper.setNames(record.getColumns());
+            fieldSetMapper.setFormats(record.getColumnFormats());
+            fieldSetMapper.setCustomEditors(editors);
+            mappers.put(record.getPrefix(), fieldSetMapper);
+        }
+        
+        PatternMatchingCompositeLineMapper lineMapper = new PatternMatchingCompositeLineMapper();
+        lineMapper.setFieldSetMappers(mappers);
+        lineMapper.setTokenizers(tokenizers);
+        FixedWidthFileItemReader reader = new FixedWidthFileItemReader();
+        reader.setLineMapper(lineMapper);
+        reader.setLinesToSkip(this.linesToSkip);
+        return reader;
     }
 
-    public List<FixedWidthRecordLayout> getRecordLayouts() {
-        return this.records;
-    }
+    
 
-    public List<FixedWidthRecordLayout> getDetailLayouts() {
-        return this.records.stream()
-                .filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.DETAIL)
-                .collect(Collectors.toList());
-    }
-
-    public FixedWidthRecordLayout getHeaderLayout() {
-        return this.records.stream()
-                .filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER)
-                .findFirst()
-                .orElse(null);
-    }
-
-    public FixedWidthRecordLayout getFooterLayout() {
-        return this.records.stream()
-                .filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.FOOTER)
-                .findFirst()
-                .orElse(null);
-    }
 
     @Override
     public String toString() {

@@ -1,9 +1,9 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
+import com.github.sourcegroove.batch.item.file.format.Format;
 import org.junit.Test;
 import org.springframework.batch.item.file.transform.Range;
 
-import java.text.NumberFormat;
 import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
@@ -19,22 +19,10 @@ public class FixedWidthLineFormatBuilderTest {
         
         assertEquals("0000000001", String.format(format, 1));
     }
-    @Test
-    public void givenStringBasedZDFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder()
-                .append(1, 10, Format.ZD)
-                .build();
-
-        assertEquals("%-10.10s", format);
-        String line = String.format(format, 6);
-        assertEquals(10, line.length());
-        assertEquals("6         ", line);
-    }
-
     
     @Test
     public void givenZDFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.ZD)
                 .build();
 
@@ -46,7 +34,7 @@ public class FixedWidthLineFormatBuilderTest {
 
     @Test
     public void givenDecimalFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.DECIMAL)
                 .build();
 
@@ -57,7 +45,7 @@ public class FixedWidthLineFormatBuilderTest {
     }
     @Test
     public void givenIntegerFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.INTEGER)
                 .build();
         assertEquals("%010d", format);
@@ -68,7 +56,7 @@ public class FixedWidthLineFormatBuilderTest {
 
     @Test
     public void givenYYYYFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.YYYY)
                 .build();
 
@@ -79,7 +67,7 @@ public class FixedWidthLineFormatBuilderTest {
     }
     @Test
     public void givenYYYYMMDDFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.YYYYMMDD)
                 .build();
 
@@ -90,7 +78,7 @@ public class FixedWidthLineFormatBuilderTest {
     }
     @Test
     public void givenMMYYYYFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.MMYYYY)
                 .build();
 
@@ -101,7 +89,7 @@ public class FixedWidthLineFormatBuilderTest {
     }
     @Test
     public void givenYYYMMFormatWhenFormatThenCorrectFormat(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10, Format.YYYYMM)
                 .build();
 
@@ -113,7 +101,7 @@ public class FixedWidthLineFormatBuilderTest {
 
     @Test
     public void givenNonConsecutiveFieldsWhenFormatThenFiller(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10)
                 .append(21, 30)
                 .build();
@@ -131,7 +119,7 @@ public class FixedWidthLineFormatBuilderTest {
 
     @Test
     public void givenConsecutiveFieldsWhenFormatThenCorrect(){
-        String format = new FixedWidthLineFormatBuilder(false)
+        String format = new FixedWidthLineFormatBuilder(true)
                 .append(1, 10)
                 .append(11, 20)
                 .build();

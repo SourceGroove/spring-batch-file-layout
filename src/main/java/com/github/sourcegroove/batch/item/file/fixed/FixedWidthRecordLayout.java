@@ -1,14 +1,13 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
+import com.github.sourcegroove.batch.item.file.format.PropertyFormatter;
+import com.github.sourcegroove.batch.item.file.format.Format;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class FixedWidthRecordLayout {
@@ -35,7 +34,7 @@ public class FixedWidthRecordLayout {
         this.targetType = targetType;
         this.fileLayout = fileLayout;
         this.strict = true;
-        this.format = new FixedWidthLineFormatBuilder(fileLayout.isWriteAsStrings());
+        this.format = new FixedWidthLineFormatBuilder();
     }
 
     public RecordType getRecordType(){
@@ -109,23 +108,14 @@ public class FixedWidthRecordLayout {
 
     public String[] getMappableColumns() {
         List<String> mappable = this.columns.stream()
-                .filter(c -> !StringUtils.equals(c, FixedWidthPropertyFormatter.NON_FIELD_PROPERTY))
+                .filter(c -> !StringUtils.equals(c, PropertyFormatter.NON_FIELD_PROPERTY))
                 .collect(Collectors.toList());
         return mappable.toArray(new String[mappable.size()]);
-    }
-    public Range[] getMappableColumnRanges() {
-        List<Range> ranges = new ArrayList<>();
-        for (int i = 0; i < this.columns.size(); i++) {
-            if(!StringUtils.equals(this.columns.get(i), FixedWidthPropertyFormatter.NON_FIELD_PROPERTY)){
-                ranges.add(this.columnRanges.get(i));
-            }
-        }
-        return ranges.toArray(new Range[ranges.size()]);
     }
     public Format[] getMappableColumnFormats() {
         List<Format> formats = new ArrayList<>();
         for (int i = 0; i < this.columns.size(); i++) {
-            if(!StringUtils.equals(this.columns.get(i), FixedWidthPropertyFormatter.NON_FIELD_PROPERTY)){
+            if(!StringUtils.equals(this.columns.get(i), PropertyFormatter.NON_FIELD_PROPERTY)){
                 formats.add(this.columnFormats.get(i));
             }
         }
@@ -134,14 +124,14 @@ public class FixedWidthRecordLayout {
 
     //filler and constant columns (non-mappable)
     public FixedWidthRecordLayout column(int start, int end) {
-        return column(FixedWidthPropertyFormatter.NON_FIELD_PROPERTY, new Range(start, end), Format.FILLER, null);
+        return column(PropertyFormatter.NON_FIELD_PROPERTY, new Range(start, end), Format.FILLER, null);
     }
     public FixedWidthRecordLayout column(int width, String value) {
-        return column(FixedWidthPropertyFormatter.NON_FIELD_PROPERTY, getRange(width), Format.FILLER, value);
+        return column(PropertyFormatter.NON_FIELD_PROPERTY, getRange(width), Format.FILLER, value);
     }
     public FixedWidthRecordLayout column(int start, int end, String value) {
         Range range = new Range(start, end);
-        return column(FixedWidthPropertyFormatter.NON_FIELD_PROPERTY, range, null, value);
+        return column(PropertyFormatter.NON_FIELD_PROPERTY, range, null, value);
     }
 
     // Field mappable columns
@@ -223,4 +213,5 @@ public class FixedWidthRecordLayout {
         return str.toString();
     }
 
+    
 }

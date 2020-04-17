@@ -1,7 +1,6 @@
 package com.github.sourcegroove.batch.item.file.delimited;
 
-import com.github.sourcegroove.batch.item.file.delimited.DelimitedLayout;
-import com.github.sourcegroove.batch.item.file.editor.LocalDateEditor;
+import com.github.sourcegroove.batch.item.file.format.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.Layout;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;

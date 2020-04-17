@@ -1,6 +1,6 @@
 package com.github.sourcegroove.batch.item.file.excel.reader;
 
-import com.github.sourcegroove.batch.item.file.excel.reader.ExcelItemReader;
+import com.github.sourcegroove.batch.item.file.excel.ExcelItemReader;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
 import org.apache.commons.logging.Log;

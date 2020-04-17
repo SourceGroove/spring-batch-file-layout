@@ -1,13 +1,11 @@
 package com.github.sourcegroove.batch.item.file.delimited;
 
 import com.github.sourcegroove.batch.item.file.Layout;
-import com.github.sourcegroove.batch.item.file.delimited.reader.DelimitedFileItemReader;
-import com.github.sourcegroove.batch.item.file.delimited.writer.DelimitedFileItemWriter;
-import com.github.sourcegroove.batch.item.file.editor.EditorFactory;
-import com.github.sourcegroove.batch.item.file.fixed.writer.FixedWidthDelegatingFieldExtractor;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import com.github.sourcegroove.batch.item.file.format.Format;
+import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldExtractor;
+import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldSetMapper;
+import com.github.sourcegroove.batch.item.file.format.editor.EditorFactory;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
-import org.springframework.batch.item.file.transform.BeanWrapperFieldExtractor;
 import org.springframework.batch.item.file.transform.DelimitedLineAggregator;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 
@@ -17,14 +15,20 @@ import java.util.List;
 import java.util.Map;
 
 public class DelimitedLayout implements Layout {
+    private static final char DEFAULT_QUALIFIER = '"';
+    private static final String DEFAULT_DELIMETER = ",";
+    
     private int linesToSkip = 0;
-    private char qualifier = '"';
-    private String delimiter = ",";
+    private char qualifier = DEFAULT_QUALIFIER;
+    private String delimiter = DEFAULT_DELIMETER;
     private Class targetType;
-    private List<String> columns = new ArrayList<>();
+    private List<String> names = new ArrayList<>();
+    private List<Format> formats = new ArrayList<>();
     private Map<Class<?>, PropertyEditor> editors;
 
     public DelimitedLayout(){
+        this.qualifier = DEFAULT_QUALIFIER;
+        this.delimiter = DEFAULT_DELIMETER;
         this.editors = EditorFactory.getDefaultEditors();
     }
 
@@ -32,7 +36,6 @@ public class DelimitedLayout implements Layout {
         this.editors = EditorFactory.getDefaultEditors(dateFormat);
         return this;
     }
-
 
     public DelimitedLayout linesToSkip(int linesToSkip) {
         this.linesToSkip = linesToSkip;
@@ -57,8 +60,14 @@ public class DelimitedLayout implements Layout {
         this.targetType = targetType;
         return this;
     }
+
     public DelimitedLayout column(String name){
-        this.columns.add(name);
+        return this.column(name, Format.STRING);
+    }
+
+    public DelimitedLayout column(String name, Format format){
+        this.names.add(name);
+        this.formats.add(format);
         return this;
     }
 
@@ -68,18 +77,20 @@ public class DelimitedLayout implements Layout {
 
     public DelimitedFileItemReader getItemReader() {
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
-        tokenizer.setNames(getColumns());
+        tokenizer.setNames(getNames());
         tokenizer.setQuoteCharacter(this.qualifier);
         tokenizer.setDelimiter(this.delimiter);
 
-        BeanWrapperFieldSetMapper fieldSetMapper = new BeanWrapperFieldSetMapper();
+        FormatAwareFieldSetMapper fieldSetMapper = new FormatAwareFieldSetMapper();
         fieldSetMapper.setTargetType(this.targetType);
         fieldSetMapper.setCustomEditors(this.editors);
-
+        fieldSetMapper.setNames(this.names);
+        fieldSetMapper.setFormats(this.formats);
+        
         DefaultLineMapper lineMapper = new DefaultLineMapper();
-        lineMapper.setFieldSetMapper(fieldSetMapper);
         lineMapper.setLineTokenizer(tokenizer);
-
+        lineMapper.setFieldSetMapper(fieldSetMapper);
+        
         DelimitedFileItemReader reader = new DelimitedFileItemReader();
         reader.setLineMapper(lineMapper);
         reader.setLinesToSkip(this.linesToSkip);
@@ -88,12 +99,10 @@ public class DelimitedLayout implements Layout {
 
     public DelimitedFileItemWriter getItemWriter() {
 
-        BeanWrapperFieldExtractor extractor = new BeanWrapperFieldExtractor();
-        extractor.setNames(getColumns());
-
-        FixedWidthDelegatingFieldExtractor fieldExtractor = new FixedWidthDelegatingFieldExtractor();
-        fieldExtractor.setFieldExtractor(extractor);
-        fieldExtractor.setCustomEditors(this.editors);
+        FormatAwareFieldExtractor extractor = new FormatAwareFieldExtractor<>();
+        extractor.setNames(this.names);
+        extractor.setFormats(this.formats);
+        extractor.setCustomEditors(this.editors);
 
         DelimitedLineAggregator lineAggregator = new DelimitedLineAggregator();
         lineAggregator.setFieldExtractor(extractor);
@@ -104,8 +113,8 @@ public class DelimitedLayout implements Layout {
         return writer;
     }
 
-    private String[] getColumns(){
-        return this.columns.toArray(new String[this.columns.size()]);
+    private String[] getNames(){
+        return this.names.toArray(new String[this.names.size()]);
     }
 
 
