@@ -1,21 +1,23 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
-import com.github.sourcegroove.batch.item.file.format.PropertyFormatter;
+import com.github.sourcegroove.batch.item.file.ColumnLayout;
+import com.github.sourcegroove.batch.item.file.RecordLayout;
+import com.github.sourcegroove.batch.item.file.RecordType;
 import com.github.sourcegroove.batch.item.file.format.Format;
+import com.github.sourcegroove.batch.item.file.format.PropertyFormatter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.batch.item.file.transform.Range;
 
 import java.beans.PropertyEditor;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FixedWidthRecordLayout {
-    public enum RecordType {
-        DETAIL,
-        HEADER,
-        FOOTER
-    }
+public class FixedWidthRecordLayout implements RecordLayout {
+    
 
     private FixedWidthLayout fileLayout;
     private Class targetType;
@@ -25,7 +27,7 @@ public class FixedWidthRecordLayout {
     private Map<Class<?>, PropertyEditor> readEditors = new HashMap<>();
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
     private FixedWidthLineFormatBuilder format;
-    private List<String> columns = new ArrayList<>();
+    private List<String> columnNames = new ArrayList<>();
     private List<Range> columnRanges = new ArrayList<>();
     private List<Format> columnFormats = new ArrayList<>();
 
@@ -37,6 +39,22 @@ public class FixedWidthRecordLayout {
         this.format = new FixedWidthLineFormatBuilder();
     }
 
+    public String getType(){
+        return this.recordType != null ? this.recordType.name() : RecordType.DETAIL.name();
+    }
+    public List<ColumnLayout> getColumns(){
+        List<ColumnLayout> columns = new ArrayList<>();
+        for(int i = 0; i < this.columnNames.size(); i++){
+            Range r = this.columnRanges.get(i);
+            columns.add(new ColumnLayout()
+                    .setName(this.columnNames.get(i))
+                    .setFormat(this.columnFormats.get(i))
+                    .setStart(r.getMin())
+                    .setEnd(r.getMax())
+            );
+        }
+        return columns;
+    }
     public RecordType getRecordType(){
         return this.recordType;
     }
@@ -99,23 +117,23 @@ public class FixedWidthRecordLayout {
         return CollectionUtils.isEmpty(this.columnRanges) ? 0 : 
                 this.columnRanges.get(this.columnRanges.size() - 1).getMax();
     }
-    public String[] getColumns() {
-        return this.columns.toArray(new String[this.columns.size()]);
+    public String[] getColumnNames() {
+        return this.columnNames.toArray(new String[this.columnNames.size()]);
     }
     public Format[] getColumnFormats() {
         return this.columnFormats.toArray(new Format[columnFormats.size()]);
     }
 
     public String[] getMappableColumns() {
-        List<String> mappable = this.columns.stream()
+        List<String> mappable = this.columnNames.stream()
                 .filter(c -> !StringUtils.equals(c, PropertyFormatter.NON_FIELD_PROPERTY))
                 .collect(Collectors.toList());
         return mappable.toArray(new String[mappable.size()]);
     }
     public Format[] getMappableColumnFormats() {
         List<Format> formats = new ArrayList<>();
-        for (int i = 0; i < this.columns.size(); i++) {
-            if(!StringUtils.equals(this.columns.get(i), PropertyFormatter.NON_FIELD_PROPERTY)){
+        for (int i = 0; i < this.columnNames.size(); i++) {
+            if(!StringUtils.equals(this.columnNames.get(i), PropertyFormatter.NON_FIELD_PROPERTY)){
                 formats.add(this.columnFormats.get(i));
             }
         }
@@ -156,7 +174,7 @@ public class FixedWidthRecordLayout {
             format = value != null ? Format.STRING : Format.FILLER;
         }
         this.columnRanges.add(range);
-        this.columns.add(name);
+        this.columnNames.add(name);
         this.columnFormats.add(format);
         this.format.append(range, format, value);
         return this;
@@ -198,8 +216,8 @@ public class FixedWidthRecordLayout {
                 .append("(").append(this.getTargetType().getSimpleName()).append(".class, \"").append(this.getPrefix()).append("\")\n")
                 .append("    //.format(\"").append(this.getFormat()).append("\")\n");
 
-        for (int i = 0; i < this.columns.size(); i++) {
-            String name = this.columns.get(i);
+        for (int i = 0; i < this.columnNames.size(); i++) {
+            String name = this.columnNames.get(i);
             Range range = this.columnRanges.get(i);
             Format fmt = this.columnFormats.get(i);
 

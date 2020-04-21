@@ -26,6 +26,42 @@ public class FixedWidthLayoutTest {
     private static final String SAMPLE_FIXED = "sample-file.txt";
     private static final String SAMPLE_FIXED_MULTIPLE_TYPES = "sample-file-record-types.txt";
 
+    @Test
+    public void givenLayoutWhenRecordsThenRecords()  {
+        Layout layout = new FixedWidthLayout()
+                .header(MockUserRecord.class, "HEAD")
+                .column(1, 20, "HEAD")
+                .column(21, 22, "X")
+                .record(MockUserRecord.class)
+                .column(10, "0123456789")
+                .prefix("USER*")
+                .column("recordType", 1, 4)
+                .column("username", 5, 10)
+                .column("firstName", 11, 20)
+                .column("lastName", 31, 40)
+                .column("dateOfBirth", 41, 48)
+                .record(MockRoleRecord.class)
+                .prefix("ROLE*")
+                .column("recordType", 1, 4)
+                .column("roleKey", 5, 8)
+                .column("role", 9, 20)
+                .footer(MockUserRecord.class, "FOOT")
+                .column(1, 20, "HEAD")
+                .column(21, 22, "X")
+                .layout();
+        
+        layout.getRecords().forEach(r -> {
+            log.info("Record " + r.getType());
+            r.getColumns().forEach(c -> {
+                log.info("Column " + " " 
+                        + c.getName()
+                        + " " + c.getFormat()
+                        + " " + c.getStart()
+                        + " " + c.getEnd());
+            });
+        });
+    }
+    
 
     @Test
     public void givenLeadingFillerWhenCreateThenCorrectRanges() throws Exception {

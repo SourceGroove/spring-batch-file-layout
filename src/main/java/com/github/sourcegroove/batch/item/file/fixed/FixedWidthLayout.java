@@ -1,6 +1,8 @@
 package com.github.sourcegroove.batch.item.file.fixed;
 
 import com.github.sourcegroove.batch.item.file.Layout;
+import com.github.sourcegroove.batch.item.file.RecordLayout;
+import com.github.sourcegroove.batch.item.file.RecordType;
 import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldExtractor;
 import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldSetMapper;
 import com.github.sourcegroove.batch.item.file.format.editor.EditorFactory;
@@ -26,6 +28,10 @@ public class FixedWidthLayout implements Layout {
     private Map<Class<?>, PropertyEditor> writeEditors = new HashMap<>();
     private List<FixedWidthRecordLayout> records = new ArrayList<>();
 
+    public List<RecordLayout> getRecords(){
+        return new ArrayList<RecordLayout>(this.records);
+    }
+    
     public FixedWidthLayout dateFormat(String dateFormat) {
         this.readEditors.putAll(EditorFactory.getDefaultEditors(dateFormat));
         this.writeEditors.putAll(EditorFactory.getDefaultEditors(dateFormat));
@@ -58,27 +64,27 @@ public class FixedWidthLayout implements Layout {
         return footer(targetType);
     }
     public FixedWidthRecordLayout footer(Class targetType, String prefix) {
-        this.records.stream().filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER)
+        this.records.stream().filter(r -> r.getRecordType() == RecordType.HEADER)
                 .findFirst()
                 .ifPresent(r -> new IllegalArgumentException("Footer already defined"));
-        return record(targetType, FixedWidthRecordLayout.RecordType.FOOTER, prefix);
+        return record(targetType, RecordType.FOOTER, prefix);
     }
     public FixedWidthRecordLayout header(Class targetType) {
         return header(targetType, null);
     }
     public FixedWidthRecordLayout header(Class targetType, String prefix) {
-        this.records.stream().filter(r -> r.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER)
+        this.records.stream().filter(r -> r.getRecordType() == RecordType.HEADER)
                 .findFirst()
                 .ifPresent(r -> new IllegalArgumentException("Header already defined"));
-        return record(targetType, FixedWidthRecordLayout.RecordType.HEADER, prefix);
+        return record(targetType, RecordType.HEADER, prefix);
     }
 
     public FixedWidthRecordLayout record(Class targetType) {
-        return record(targetType, FixedWidthRecordLayout.RecordType.DETAIL, null);
+        return record(targetType, RecordType.DETAIL, null);
     }
 
     public FixedWidthRecordLayout record(Class targetType, String prefix) {
-        return record(targetType, FixedWidthRecordLayout.RecordType.DETAIL, prefix);
+        return record(targetType, RecordType.DETAIL, prefix);
     }
 
     public Map<Class<?>, PropertyEditor> getReadEditors() {
@@ -94,9 +100,9 @@ public class FixedWidthLayout implements Layout {
         FixedWidthFileItemWriter writer = new FixedWidthFileItemWriter();
         for (FixedWidthRecordLayout record : this.records) {
             LineAggregator aggregator = getLineAggregator(record);
-            if (record.getRecordType() == FixedWidthRecordLayout.RecordType.HEADER) {
+            if (record.getRecordType() == RecordType.HEADER) {
                 writer.setHeaderLineAggregator(aggregator);
-            } else if (record.getRecordType() == FixedWidthRecordLayout.RecordType.FOOTER) {
+            } else if (record.getRecordType() == RecordType.FOOTER) {
                 writer.setFooterLineAggregator(aggregator);
             } else {
                 writer.setLineAggregator(record.getTargetType(), aggregator);
@@ -128,13 +134,13 @@ public class FixedWidthLayout implements Layout {
             editors.putAll(record.getReadEditors());
             FixedLengthTokenizer tokenizer = new FixedLengthTokenizer();
             tokenizer.setStrict(record.isStrict());
-            tokenizer.setNames(record.getColumns());
+            tokenizer.setNames(record.getColumnNames());
             tokenizer.setColumns(record.getColumnRanges());
             tokenizers.put(record.getPrefix(), tokenizer);
             
             FormatAwareFieldSetMapper fieldSetMapper = new FormatAwareFieldSetMapper();
             fieldSetMapper.setTargetType(record.getTargetType());
-            fieldSetMapper.setNames(record.getColumns());
+            fieldSetMapper.setNames(record.getColumnNames());
             fieldSetMapper.setFormats(record.getColumnFormats());
             fieldSetMapper.setCustomEditors(editors);
             mappers.put(record.getPrefix(), fieldSetMapper);
@@ -164,7 +170,7 @@ public class FixedWidthLayout implements Layout {
     }
 
 
-    private FixedWidthRecordLayout record(Class targetType, FixedWidthRecordLayout.RecordType recordType, String prefix) {
+    private FixedWidthRecordLayout record(Class targetType, RecordType recordType, String prefix) {
         FixedWidthRecordLayout record = new FixedWidthRecordLayout(targetType, this);
         if (recordType != null) {
             record.recordType(recordType);

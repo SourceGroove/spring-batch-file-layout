@@ -1,6 +1,9 @@
 package com.github.sourcegroove.batch.item.file.delimited;
 
+import com.github.sourcegroove.batch.item.file.ColumnLayout;
 import com.github.sourcegroove.batch.item.file.Layout;
+import com.github.sourcegroove.batch.item.file.RecordLayout;
+import com.github.sourcegroove.batch.item.file.RecordType;
 import com.github.sourcegroove.batch.item.file.format.Format;
 import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldExtractor;
 import com.github.sourcegroove.batch.item.file.format.FormatAwareFieldSetMapper;
@@ -31,7 +34,7 @@ public class DelimitedLayout implements Layout {
         this.delimiter = DEFAULT_DELIMETER;
         this.editors = EditorFactory.getDefaultEditors();
     }
-
+    
     public DelimitedLayout dateFormat(String dateFormat) {
         this.editors = EditorFactory.getDefaultEditors(dateFormat);
         return this;
@@ -117,5 +120,24 @@ public class DelimitedLayout implements Layout {
         return this.names.toArray(new String[this.names.size()]);
     }
 
+    public List<RecordLayout> getRecords() {
+        List<ColumnLayout> columns = new ArrayList<>();
+        for(int i = 0; i < names.size(); i++){
+            columns.add(new ColumnLayout().setName(names.get(i)).setFormat(formats.get(i)).setStart(i + 1));
+        }
+        List<RecordLayout> records = new ArrayList<>();
+        records.add(new RecordLayout(){
+            public String getType() {
+                return RecordType.DETAIL.name();
+            }
+            public List<ColumnLayout> getColumns() {
+                return columns;
+            }
+        });
+        return records;
+    }
 
+
+  
+    
 }
