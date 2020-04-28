@@ -31,7 +31,7 @@ public class SimpleExcelItemReaderTest extends AbstractExcelItemReaderTest{
         fieldSetMapper.setCustomEditors(editors);
 
         ExcelRowTokenizer tokenizer = new ExcelRowTokenizer();
-        tokenizer.setNames(new String[]{"recordType", "username", "firstName","lastName","dateOfBirth"});
+        tokenizer.setNames(new String[]{"recordType", "username", "firstName","lastName","dateOfBirth", "age"});
         ExcelRowMapper rowMapper = new ExcelRowMapper();
         rowMapper.setFieldSetMapper(fieldSetMapper);
         rowMapper.setRowTokenizer(tokenizer);

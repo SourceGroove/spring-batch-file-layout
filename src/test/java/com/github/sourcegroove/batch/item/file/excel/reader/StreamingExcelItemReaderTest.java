@@ -8,6 +8,8 @@ import com.github.sourcegroove.batch.item.file.format.editor.LocalDateEditor;
 import com.github.sourcegroove.batch.item.file.format.editor.LocalDateTimeEditor;
 import com.github.sourcegroove.batch.item.file.mock.MockFactory;
 import com.github.sourcegroove.batch.item.file.mock.MockUserRecord;
+import org.junit.Test;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 
 import java.beans.PropertyEditor;
@@ -18,8 +20,17 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.assertNotNull;
+
 public class StreamingExcelItemReaderTest extends AbstractExcelItemReaderTest {
 
+    @Test
+    public void givenFileWithBigDecimalWhenReadThenRead() throws Exception {
+        ExcelItemReader<MockUserRecord> reader = getReader(SAMPLE_FILE_BIG_DECIMAL, null);
+        reader.open(new ExecutionContext());
+        assertNotNull(reader.read());
+    }
+    
     public ExcelItemReader getReader(String filename, Integer sheet){
         Map<Class<?>, PropertyEditor> editors = new HashMap<>();
         editors.put(LocalDate.class, new LocalDateEditor());
@@ -30,7 +41,7 @@ public class StreamingExcelItemReaderTest extends AbstractExcelItemReaderTest {
         fieldSetMapper.setCustomEditors(editors);
 
         ExcelRowTokenizer tokenizer = new ExcelRowTokenizer();
-        tokenizer.setNames(new String[]{"recordType", "username", "firstName","lastName","dateOfBirth"});
+        tokenizer.setNames(new String[]{"recordType", "username", "firstName","lastName","dateOfBirth", "age"});
         ExcelRowMapper rowMapper = new ExcelRowMapper();
         rowMapper.setFieldSetMapper(fieldSetMapper);
         rowMapper.setRowTokenizer(tokenizer);

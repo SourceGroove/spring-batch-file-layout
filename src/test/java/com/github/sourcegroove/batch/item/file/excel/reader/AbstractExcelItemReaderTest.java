@@ -14,12 +14,14 @@ import static org.junit.Assert.assertNull;
 public abstract class AbstractExcelItemReaderTest {
 
     protected final Log log = LogFactory.getLog(getClass());
-    private static final String SAMPLE_FILE_5000 = "sample-file-5000-records.xlsx";
-    private static final String SAMPLE_FILE_100000 = "sample-file-100000-records.xlsx";
-    private static final String SAMPLE_FILE = "sample-file.xlsx";
+    protected static final String SAMPLE_FILE_BIG_DECIMAL = "sample-file-big-decimal.xlsx";
+    protected static final String SAMPLE_FILE_5000 = "sample-file-5000-records.xlsx";
+    protected static final String SAMPLE_FILE_100000 = "sample-file-100000-records.xlsx";
+    protected static final String SAMPLE_FILE = "sample-file.xlsx";
 
     public abstract ExcelItemReader getReader(String filename, Integer sheet);
-
+    
+    
     @Test
     public void givenFileWith100kRecordsWhenReadThenRead() throws Exception {
         ExcelItemReader<MockUserRecord> reader = getReader(SAMPLE_FILE_100000, null);

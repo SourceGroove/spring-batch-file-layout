@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class FixedWidthRecordLayout implements RecordLayout {
-    
+
 
     private FixedWidthLayout fileLayout;
     private Class targetType;
@@ -39,12 +39,13 @@ public class FixedWidthRecordLayout implements RecordLayout {
         this.format = new FixedWidthLineFormatBuilder();
     }
 
-    public String getType(){
+    public String getType() {
         return this.recordType != null ? this.recordType.name() : RecordType.DETAIL.name();
     }
-    public List<ColumnLayout> getColumns(){
+
+    public List<ColumnLayout> getColumns() {
         List<ColumnLayout> columns = new ArrayList<>();
-        for(int i = 0; i < this.columnNames.size(); i++){
+        for (int i = 0; i < this.columnNames.size(); i++) {
             Range r = this.columnRanges.get(i);
             columns.add(new ColumnLayout()
                     .setName(this.columnNames.get(i))
@@ -55,26 +56,33 @@ public class FixedWidthRecordLayout implements RecordLayout {
         }
         return columns;
     }
-    public RecordType getRecordType(){
+
+    public RecordType getRecordType() {
         return this.recordType;
     }
+
     public Class getTargetType() {
         return this.targetType;
     }
-    public boolean isStrict(){
+
+    public boolean isStrict() {
         return this.strict;
     }
+
     public String getPrefix() {
         return this.prefix;
     }
+
     public FixedWidthRecordLayout strict(boolean strict) {
         this.strict = strict;
         return this;
     }
+
     public FixedWidthRecordLayout recordType(RecordType recordType) {
         this.recordType = recordType;
         return this;
     }
+
     public FixedWidthRecordLayout prefix(String prefix) {
         if (StringUtils.isNotBlank(prefix) && !StringUtils.endsWith(prefix, "*")) {
             prefix += "*";
@@ -92,10 +100,12 @@ public class FixedWidthRecordLayout implements RecordLayout {
         this.writeEditors.put(clazz, editor);
         return this;
     }
+
     public FixedWidthRecordLayout readEditor(Class clazz, PropertyEditor editor) {
         this.readEditors.put(clazz, editor);
         return this;
     }
+
     public Map<Class<?>, PropertyEditor> getWriteEditors() {
         return this.writeEditors;
     }
@@ -113,13 +123,15 @@ public class FixedWidthRecordLayout implements RecordLayout {
         return this.columnRanges.toArray(new Range[this.columnRanges.size()]);
     }
 
-    public int getLineLength(){
-        return CollectionUtils.isEmpty(this.columnRanges) ? 0 : 
+    public int getLineLength() {
+        return CollectionUtils.isEmpty(this.columnRanges) ? 0 :
                 this.columnRanges.get(this.columnRanges.size() - 1).getMax();
     }
+
     public String[] getColumnNames() {
         return this.columnNames.toArray(new String[this.columnNames.size()]);
     }
+
     public Format[] getColumnFormats() {
         return this.columnFormats.toArray(new Format[columnFormats.size()]);
     }
@@ -130,10 +142,11 @@ public class FixedWidthRecordLayout implements RecordLayout {
                 .collect(Collectors.toList());
         return mappable.toArray(new String[mappable.size()]);
     }
+
     public Format[] getMappableColumnFormats() {
         List<Format> formats = new ArrayList<>();
         for (int i = 0; i < this.columnNames.size(); i++) {
-            if(!StringUtils.equals(this.columnNames.get(i), PropertyFormatter.NON_FIELD_PROPERTY)){
+            if (!StringUtils.equals(this.columnNames.get(i), PropertyFormatter.NON_FIELD_PROPERTY)) {
                 formats.add(this.columnFormats.get(i));
             }
         }
@@ -144,9 +157,11 @@ public class FixedWidthRecordLayout implements RecordLayout {
     public FixedWidthRecordLayout column(int start, int end) {
         return column(PropertyFormatter.NON_FIELD_PROPERTY, new Range(start, end), Format.FILLER, null);
     }
+
     public FixedWidthRecordLayout column(int width, String value) {
         return column(PropertyFormatter.NON_FIELD_PROPERTY, getRange(width), Format.FILLER, value);
     }
+
     public FixedWidthRecordLayout column(int start, int end, String value) {
         Range range = new Range(start, end);
         return column(PropertyFormatter.NON_FIELD_PROPERTY, range, null, value);
@@ -170,7 +185,7 @@ public class FixedWidthRecordLayout implements RecordLayout {
     }
 
     public FixedWidthRecordLayout column(String name, Range range, Format format, String value) {
-        if(format == null){
+        if (format == null) {
             format = value != null ? Format.STRING : Format.FILLER;
         }
         this.columnRanges.add(range);
@@ -183,18 +198,23 @@ public class FixedWidthRecordLayout implements RecordLayout {
     public FixedWidthRecordLayout record(Class targetType) {
         return this.fileLayout.record(targetType);
     }
+
     public FixedWidthRecordLayout record(Class targetType, String prefix) {
         return this.fileLayout.record(targetType, prefix);
     }
+
     public FixedWidthRecordLayout header(Class targetType) {
         return this.fileLayout.header(targetType);
     }
+
     public FixedWidthRecordLayout header(Class targetType, String prefix) {
         return this.fileLayout.header(targetType, prefix);
     }
+
     public FixedWidthRecordLayout footer(Class targetType) {
         return this.fileLayout.footer(targetType);
     }
+
     public FixedWidthRecordLayout footer(Class targetType, String prefix) {
         return this.fileLayout.footer(targetType, prefix);
     }
@@ -203,7 +223,7 @@ public class FixedWidthRecordLayout implements RecordLayout {
         return this.fileLayout;
     }
 
-    private Range getRange(int width){
+    private Range getRange(int width) {
         int start = CollectionUtils.isNotEmpty(this.columnRanges) ? this.columnRanges.get(this.columnRanges.size() - 1).getMax() + 1 : 1;
         int end = start + width - 1;
         return new Range(start, end);
@@ -230,6 +250,5 @@ public class FixedWidthRecordLayout implements RecordLayout {
         }
         return str.toString();
     }
-
     
 }

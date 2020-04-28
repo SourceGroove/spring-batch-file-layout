@@ -8,7 +8,7 @@ public class MockUserRecord {
     private String lastName;
     private String firstName;
     private LocalDate dateOfBirth;
-    private Integer age;
+    private Long age;
 
     public String getRecordType() {
         return recordType;
@@ -50,11 +50,11 @@ public class MockUserRecord {
         this.dateOfBirth = dateOfBirth;
     }
 
-    public Integer getAge() {
+    public Long getAge() {
         return age;
     }
 
-    public void setAge(Integer age) {
+    public void setAge(Long age) {
         this.age = age;
     }
 }

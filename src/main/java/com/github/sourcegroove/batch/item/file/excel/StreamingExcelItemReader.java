@@ -1,5 +1,6 @@
 package com.github.sourcegroove.batch.item.file.excel;
 
+import com.github.sourcegroove.batch.item.file.format.Format;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.ooxml.util.SAXHelper;
@@ -26,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -184,7 +186,7 @@ public class StreamingExcelItemReader<T>  extends AbstractItemCountingItemStream
                 LocalDateTime dt = new Timestamp(date.getTime()).toLocalDateTime();
                 return dateFormatter.format(dt);
             }
-            return String.valueOf(value);
+            return super.formatRawCellContents(value, formatIndex, formatString, use1904Windowing);
         }
     }
 
